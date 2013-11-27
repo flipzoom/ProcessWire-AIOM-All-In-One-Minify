@@ -1,4 +1,6 @@
-ProcessWire All in One Minify (CSS / JS / HTML / GZIP)
-=============================
+#ProcessWire – All in One Minify#
 
-- soon -
+####Simple minify for CSS, JS and HTML with optional GZIP compression####
+-----------------------------
+
+Coming soon. Working hard on finishing module.
