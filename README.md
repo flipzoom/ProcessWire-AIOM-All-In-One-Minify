@@ -14,6 +14,11 @@ AIOM (All In One Minify) is a module to easily improve the performance of the we
 * The generated files can be equipped with a prefix.
 * A file is generated which is composed according to this scheme: **prefix_md5-timestamp.extension** for example: **css_031ea978b0e6486c828ba444c6297ca5.css** – ___There is no modification of the .htaccess file is necessary.___
 
+##Installation##
+
+1. Copy the files for this module to /site/modules/AllInOneMinify/
+2. In admin: Modules > Check for new modules. Install Module > AIOM (All In One Minify) for CSS, JS and HTML.
+
 ##Minimize Stylesheets##
 
 Minimization of a single file.
