@@ -16,7 +16,7 @@
 
 - - - 
 
-##Minimize stylesheets##
+##Minimize Stylesheets##
 
 Minimization of a single file.
 
@@ -29,3 +29,29 @@ Minimize multiple files into one file.
 ```html+php
 <link rel="stylesheet" href="<?php echo AllInOneMinify::CSS(array('css/file-1.css', 'css/file-2.css', 'css/file-3.css', 'css/file-4.css')); ?>">
 ```
+
+- - - 
+
+##Minimize Javascripts##
+
+Minimization of a single file.
+
+```html+php
+<script src="<?php echo AllInOneMinify::JS('js/javascript.js'); ?>"></script>
+```
+
+Minimize multiple files into one file.
+
+```html+php
+<script src="<?php echo AllInOneMinify::JS(array('js/file-1.js', 'js/file-2.js', 'js/file-3.js', 'js/file-4.js')); ?>"></script>
+```
+
+- - - 
+
+##Exemplary template structure##
+
+/
+site/
+    templates/
+        css/
+        js/
