@@ -32,7 +32,7 @@ class AllInOneMinify extends WireData implements Module {
 	// ------------------------------------------------------------------------
 	// Name of the cache folder.
 	// ------------------------------------------------------------------------
-	private static $cacheDir			= 'aiom';
+	private static $cacheDir		= 'aiom';
 
 	// ------------------------------------------------------------------------
 	// Duration in seconds before a combined file is automatically deleted.
