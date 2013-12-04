@@ -71,6 +71,12 @@ Send me an E-Mail with your questions, suggestions or bugs to support@flipzoom.d
 * PHP 5.3.3, 5.5.3
 * Apache 2.2.21
 
+##To-do##
+
+* Compile the CSS and JS files when saving / updating the template in the admin area.
+* Configuration via the backend
+* .htaccess Improvement Tips
+
 - - - 
 
 __Best regards,__  
