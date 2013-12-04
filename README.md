@@ -62,6 +62,6 @@ The generated HTML source code is automatically minimized when rendering. This r
 
 ##Questions and comments?##
 
-Send me an E-Mail with your questions, suggestions or bugs to support@flipzoom.de.
+Send me an E-Mail with your questions, suggestions or bugs to support@flipzoom.de. Tested with ProcessWire in Version 2.3.
 
 __Dave__
