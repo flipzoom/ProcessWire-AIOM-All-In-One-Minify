@@ -56,6 +56,10 @@ site/
         js/
 ```
 
+##Minimize HTML##
+
+The generated HTML source code is automatically minimized when rendering. This requires no change to the templates must be made. Conditional Comments, textareas, code tags, etc. is excluded from the minimization.
+
 ##Questions and comments?##
 
 Send me an E-Mail with your questions, suggestions or bugs to support@flipzoom.de.
