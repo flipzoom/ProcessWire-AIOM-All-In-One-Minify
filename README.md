@@ -67,8 +67,11 @@ Send me an E-Mail with your questions, suggestions or bugs to support@flipzoom.d
 ##Test environment##
 
 * ProcessWire in Version 2.3
-* Windows (WAMP)/Linux (CentOS 6.4)
+* Windows (WAMP) / Linux (CentOS 6.4)
 * PHP 5.3.3, 5.5.3
 * Apache 2.2.21
 
-__Dave__
+- - - 
+
+__Best regards,__  
+Dave
