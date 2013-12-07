@@ -29,488 +29,493 @@
 
 class AllInOneMinify extends WireData implements Module {
 
-	// ------------------------------------------------------------------------
-	// Name of the cache folder.
-	// ------------------------------------------------------------------------
-	private static $cacheDir		    = 'aiom';
+    // ------------------------------------------------------------------------
+    // Name of the cache folder.
+    // ------------------------------------------------------------------------
+    private static $cacheDir               = 'aiom';
 
-	// ------------------------------------------------------------------------
-	// Duration in seconds before a combined file is automatically deleted.
-	// ------------------------------------------------------------------------
-	private static $cacheMaxLifetime	= 2419200; // 2419200 Seconds = 4 Weeks
+    // ------------------------------------------------------------------------
+    // Duration in seconds before a combined file is automatically deleted.
+    // ------------------------------------------------------------------------
+    private static $cacheMaxLifetime       = 2419200; // 2419200 Seconds = 4 Weeks
 
-	// ------------------------------------------------------------------------
-	// Allowed file extension of the stylesheets to combine them.
-	// ------------------------------------------------------------------------
-	private static $allowedCSSExtension	= '.css';
+    // ------------------------------------------------------------------------
+    // Allowed file extension of the stylesheets to combine them.
+    // ------------------------------------------------------------------------
+    private static $allowedCSSExtension    = '.css';
 
-	// ------------------------------------------------------------------------
-	// File extension of the combined file.
-	// ------------------------------------------------------------------------
-	private static $cssCacheExtension	= '.css';
+    // ------------------------------------------------------------------------
+    // File extension of the combined file.
+    // ------------------------------------------------------------------------
+    private static $cssCacheExtension      = '.css';
 
-	// ------------------------------------------------------------------------
-	// Prefix of the combined file.
-	// ------------------------------------------------------------------------
-	private static $cssCachePrefix		= 'css_';
+    // ------------------------------------------------------------------------
+    // Prefix of the combined file.
+    // ------------------------------------------------------------------------
+    private static $cssCachePrefix         = 'css_';
 
-	// ------------------------------------------------------------------------
-	// Allowed file extension of the javascripts to combine them.
-	// ------------------------------------------------------------------------
-	private static $allowedJSExtension	= '.js';
+    // ------------------------------------------------------------------------
+    // Allowed file extension of the javascripts to combine them.
+    // ------------------------------------------------------------------------
+    private static $allowedJSExtension     = '.js';
 
-	// ------------------------------------------------------------------------
-	// File extension of the combined file.
-	// ------------------------------------------------------------------------
-	private static $jsCacheExtension	= '.js';
+    // ------------------------------------------------------------------------
+    // File extension of the combined file.
+    // ------------------------------------------------------------------------
+    private static $jsCacheExtension       = '.js';
 
-	// ------------------------------------------------------------------------
-	// Prefix of the combined file.
-	// ------------------------------------------------------------------------
-	private static $jsCachePrefix		= 'js_';
+    // ------------------------------------------------------------------------
+    // Prefix of the combined file.
+    // ------------------------------------------------------------------------
+    private static $jsCachePrefix          = 'js_';
 
-	/**
-	 * ------------------------------------------------------------------------
-	 * getModuleInfo is a module required by all modules to tell 
-	 * ProcessWire about them
-	 * ------------------------------------------------------------------------
-	 * @return array
-	 */
-	public static function getModuleInfo() {
+    /**
+     * ------------------------------------------------------------------------
+     * getModuleInfo is a module required by all modules to tell 
+     * ProcessWire about them
+     * ------------------------------------------------------------------------
+     * @return array
+     */
+    public static function getModuleInfo() {
 
-		return array(
+        return array(
 
-			// ------------------------------------------------------------------------
-			// The module'ss title, typically a little more descriptive than the 
-			// class name
-			// ------------------------------------------------------------------------
-			'title' => 'AIOM (All In One Minify) for CSS, JS and HTML', 
+            // ------------------------------------------------------------------------
+            // The module'ss title, typically a little more descriptive than the 
+            // class name
+            // ------------------------------------------------------------------------
+            'title' => 'AIOM (All In One Minify) for CSS, JS and HTML', 
 
-			// ------------------------------------------------------------------------
-			// Version: major, minor, revision, i.e. 100 = 1.0.0
-			// ------------------------------------------------------------------------
-			'version' => 100, 
+            // ------------------------------------------------------------------------
+            // Version: major, minor, revision, i.e. 100 = 1.0.0
+            // ------------------------------------------------------------------------
+            'version' => 100, 
 
-			// ------------------------------------------------------------------------
-			// Summary is brief description of what this module is
-			// ------------------------------------------------------------------------
-			'summary' => 'AIOM (All In One Minify) is a module to easily improve the performance of the website. By a simple function call Stylesheets and Javascript files can be minimized and combined into one file. This reduces the requests and minimizes the traffic. In addition, the generated HTML source code is minimized.',
-			
-			// ------------------------------------------------------------------------
-			// Optional URL to more information about the module
-			// ------------------------------------------------------------------------
-			'href' => 'https://github.com/FlipZoomMedia/ProcessWire-AIOM-All-In-One-Minify',
+            // ------------------------------------------------------------------------
+            // Summary is brief description of what this module is
+            // ------------------------------------------------------------------------
+            'summary' => 'AIOM (All In One Minify) is a module to easily improve the performance of the website. By a simple function call Stylesheets and Javascript files can be minimized and combined into one file. This reduces the requests and minimizes the traffic. In addition, the generated HTML source code is minimized.',
+            
+            // ------------------------------------------------------------------------
+            // Optional URL to more information about the module
+            // ------------------------------------------------------------------------
+            'href' => 'https://github.com/FlipZoomMedia/ProcessWire-AIOM-All-In-One-Minify',
 
-			// ------------------------------------------------------------------------
-			// singular=true: indicates that only one instance of the module is allowed.
-			// This is usually what you want for modules that attach hooks.
-			// ------------------------------------------------------------------------
-			'singular' => true, 
+            // ------------------------------------------------------------------------
+            // singular=true: indicates that only one instance of the module is allowed.
+            // This is usually what you want for modules that attach hooks.
+            // ------------------------------------------------------------------------
+            'singular' => true, 
 
-			// ------------------------------------------------------------------------
-			// autoload=true: indicates the module should be started with ProcessWire.
-			// This is necessary for any modules that attach runtime hooks, otherwise those
-			// hooks won't get attached unless some other code calls the module on it's own.
-			// Note that autoload modules are almost always also 'singular' (seen above).
-			// ------------------------------------------------------------------------
-			'autoload' => true, 
-			);
-	}
+            // ------------------------------------------------------------------------
+            // autoload=true: indicates the module should be started with ProcessWire.
+            // This is necessary for any modules that attach runtime hooks, otherwise those
+            // hooks won't get attached unless some other code calls the module on it's own.
+            // Note that autoload modules are almost always also 'singular' (seen above).
+            // ------------------------------------------------------------------------
+            'autoload' => true, 
+            );
+    }
 
-	/**
-	 * ------------------------------------------------------------------------
-	 * Create the cache folder in the Assets folder at module installation.
-	 * ------------------------------------------------------------------------
-	 */
-	public function ___install() {
+    /**
+     * ------------------------------------------------------------------------
+     * Create the cache folder in the Assets folder at module installation.
+     * ------------------------------------------------------------------------
+     */
+    public function ___install() {
 
-		// ------------------------------------------------------------------------
-		// Check if the folder already exists.
-		// ------------------------------------------------------------------------
-		if(is_dir(wire('config')->paths->assets.self::$cacheDir.DIRECTORY_SEPARATOR)) return true;
+        // ------------------------------------------------------------------------
+        // Check if the folder already exists.
+        // ------------------------------------------------------------------------
+        if(is_dir(wire('config')->paths->assets.self::$cacheDir.DIRECTORY_SEPARATOR)) return true;
 
-		// ------------------------------------------------------------------------
-		// Try to create the folder recursively.
-		// ------------------------------------------------------------------------
-		try {
-			
-			mkdir(wire('config')->paths->assets.self::$cacheDir.DIRECTORY_SEPARATOR, wire('config')->chmodDir, true);
+        // ------------------------------------------------------------------------
+        // Try to create the folder recursively.
+        // ------------------------------------------------------------------------
+        try {
+            
+            mkdir(wire('config')->paths->assets.self::$cacheDir.DIRECTORY_SEPARATOR, wire('config')->chmodDir, true);
 
-		// ------------------------------------------------------------------------
-		// If the folder can not be created, trigger an error.
-		// ------------------------------------------------------------------------
-		} catch (Exception $e) {
+        // ------------------------------------------------------------------------
+        // If the folder can not be created, trigger an error.
+        // ------------------------------------------------------------------------
+        } catch (Exception $e) {
 
-			throw new WireException('The cache folder ('.wire('config')->paths->assets.self::$cacheDir.DIRECTORY_SEPARATOR.') could not be created.');
-		}
-	}
+            throw new WireException('The cache folder ('.wire('config')->paths->assets.self::$cacheDir.DIRECTORY_SEPARATOR.') could not be created.');
+        }
+    }
 
-	/**
-	 * ------------------------------------------------------------------------
-	 * Remove the cache folder in the Assets folder at module uninstallation.
-	 * ------------------------------------------------------------------------
-	 */
-	public function ___uninstall() {
+    /**
+     * ------------------------------------------------------------------------
+     * Remove the cache folder in the Assets folder at module uninstallation.
+     * ------------------------------------------------------------------------
+     */
+    public function ___uninstall() {
 
-		// ------------------------------------------------------------------------
-		// Check if the folder already removed.
-		// ------------------------------------------------------------------------
-		if(!is_dir(wire('config')->paths->assets.self::$cacheDir.DIRECTORY_SEPARATOR)) return true;
+        // ------------------------------------------------------------------------
+        // Check if the folder already removed.
+        // ------------------------------------------------------------------------
+        if(!is_dir(wire('config')->paths->assets.self::$cacheDir.DIRECTORY_SEPARATOR)) return true;
 
-		// ------------------------------------------------------------------------
-		// Try to remove the cache folder.
-		// ------------------------------------------------------------------------
-		try {
+        // ------------------------------------------------------------------------
+        // Try to remove the cache folder.
+        // ------------------------------------------------------------------------
+        try {
 
-			// ------------------------------------------------------------------------
-			// Remove all combined files in the cache folder.
-			// ------------------------------------------------------------------------
-			self::_clearCache(true);
+            // ------------------------------------------------------------------------
+            // Remove all combined files in the cache folder.
+            // ------------------------------------------------------------------------
+            self::_clearCache(true);
 
-			// ------------------------------------------------------------------------
-			// Remove cache folder.
-			// ------------------------------------------------------------------------
-			chmod(wire('config')->paths->assets.self::$cacheDir.DIRECTORY_SEPARATOR, 0777);
-			rmdir(wire('config')->paths->assets.self::$cacheDir.DIRECTORY_SEPARATOR);
+            // ------------------------------------------------------------------------
+            // Remove cache folder.
+            // ------------------------------------------------------------------------
+            chmod(wire('config')->paths->assets.self::$cacheDir.DIRECTORY_SEPARATOR, 0777);
+            rmdir(wire('config')->paths->assets.self::$cacheDir.DIRECTORY_SEPARATOR);
 
-		// ------------------------------------------------------------------------
-		// If the folder and files can not be removed, trigger an error.
-		// ------------------------------------------------------------------------
-		} catch (Exception $e) {
+        // ------------------------------------------------------------------------
+        // If the folder and files can not be removed, trigger an error.
+        // ------------------------------------------------------------------------
+        } catch (Exception $e) {
 
-			throw new WireException('The cache folder ('.wire('config')->paths->assets.self::$cacheDir.DIRECTORY_SEPARATOR.') and files could not be removed.');
-		}
-	}
+            throw new WireException('The cache folder ('.wire('config')->paths->assets.self::$cacheDir.DIRECTORY_SEPARATOR.') and files could not be removed.');
+        }
+    }
 
-	/**
-	 * ------------------------------------------------------------------------
-	 * Initialize the module
-	 * ------------------------------------------------------------------------
-	 * ProcessWire calls this when the module is loaded. For 'autoload' modules, 
-	 * this will be called when ProcessWire's API is ready. As a result, this 
-	 * is a good place to attach hooks.
-	 * ------------------------------------------------------------------------
-	 */
-	public function init() {
+    /**
+     * ------------------------------------------------------------------------
+     * Initialize the module
+     * ------------------------------------------------------------------------
+     * ProcessWire calls this when the module is loaded. For 'autoload' modules, 
+     * this will be called when ProcessWire's API is ready. As a result, this 
+     * is a good place to attach hooks.
+     * ------------------------------------------------------------------------
+     */
+    public function init() {
 
-		// ------------------------------------------------------------------------
-		// Add a hook that is called after rendering the page and minimize the 
-		// generated source code.
-		// ------------------------------------------------------------------------
-		$this->addHookAfter('Page::render', $this, 'HTML');
+        // ------------------------------------------------------------------------
+        // Add a hook that is called after rendering the page and minimize the 
+        // generated source code.
+        // ------------------------------------------------------------------------
+        $this->addHookAfter('Page::render', $this, 'HTML');
 
-		// ------------------------------------------------------------------------
-		// Check if already cached files longer than the configured time exist. 
-		// If so, remove those files.
-		// ------------------------------------------------------------------------
-		self::_clearCache();
-	}
+        // ------------------------------------------------------------------------
+        // Check if already cached files longer than the configured time exist. 
+        // If so, remove those files.
+        // ------------------------------------------------------------------------
+        self::_clearCache();
 
-	/**
-	 * ------------------------------------------------------------------------
-	 * Minimization and combination of JS files. Executable from the template.
-	 * ------------------------------------------------------------------------
-	 * @param  mixed $javascripts  Relative string from the template folder or an array with several files 
-	 *                             relative to the template folder. For example: 'js/file.js' or 
-	 *                             array('js/file1.js', 'js/file2.js')
-	 *                             
-	 * @example <script src="<?php echo AllInOneMinify::JS(array('js/file1.js', 'js/file2.js')); ?>"></script>
-	 * 
-	 * @return string              URL string of the combined javascript file
-	 */
-	public function JS($javascripts) {
+        // TODO: ADD HOOK, AFTER PAGE SAVE, LOAD TEMPLATE AND SEARCH FOR STYLES, JS
+        // ########################################################################
+        
+    }
 
-		// ------------------------------------------------------------------------
-		// Check if at least one file was passed.
-		// ------------------------------------------------------------------------
-		if(empty($javascripts)) throw new WireException('There were no files specified to minimize.');
+    /**
+     * ------------------------------------------------------------------------
+     * Minimization and combination of JS files. Executable from the template.
+     * ------------------------------------------------------------------------
+     * @param  mixed $javascripts  Relative string from the template folder or an array with several files 
+     *                             relative to the template folder. For example: 'js/file.js' or 
+     *                             array('js/file1.js', 'js/file2.js')
+     *                             
+     * @example <script src="<?php echo AllInOneMinify::JS(array('js/file1.js', 'js/file2.js')); ?>"></script>
+     * 
+     * @return string              URL string of the combined javascript file
+     */
+    public function JS($javascripts) {
 
-		// ------------------------------------------------------------------------
-		// Check if files exist and generating the cache file name based 
-		// on the last editing of the file.
-		// ------------------------------------------------------------------------
-		$javascripts	= is_array($javascripts) ? $javascripts : array($javascripts);
-		$javascripts	= self::_fileArray($javascripts, self::$allowedJSExtension);
-		$cacheFile		= self::_getCacheName($javascripts, self::$jsCachePrefix, self::$jsCacheExtension);
+        // ------------------------------------------------------------------------
+        // Check if at least one file was passed.
+        // ------------------------------------------------------------------------
+        if(empty($javascripts)) throw new WireException('There were no files specified to minimize.');
 
-		// ------------------------------------------------------------------------
-		// Check if there is already a combined and cached file. If not, 
-		// generating a new minimized cache file.
-		// ------------------------------------------------------------------------
-		if(!file_exists(wire('config')->paths->assets.self::$cacheDir.DIRECTORY_SEPARATOR.$cacheFile)) {
+        // ------------------------------------------------------------------------
+        // Check if files exist and generating the cache file name based 
+        // on the last editing of the file.
+        // ------------------------------------------------------------------------
+        $javascripts    = is_array($javascripts) ? $javascripts : array($javascripts);
+        $javascripts    = self::_fileArray($javascripts, self::$allowedJSExtension);
+        $cacheFile      = self::_getCacheName($javascripts, self::$jsCachePrefix, self::$jsCacheExtension);
 
-			// ------------------------------------------------------------------------
-			// Load the minimization Library
-			// ------------------------------------------------------------------------
-			// @source https://github.com/rgrove/jsmin-php
-			// @docs https://github.com/rgrove/jsmin-php
-			// @version 1.1.2
-			// @license MIT License (MIT)
-			// @description PHP implementation of Douglas Crockford's JSMin. This is 
-			// 				pretty much a direct port of jsmin.c to PHP with just a few 
-			// 				PHP-specific performance tweaks. Also, whereas jsmin.c reads 
-			// 				from stdin and outputs to stdout, this library accepts a 
-			// 				string as input and returns another string as output.
-			//------------------------------------------------------------------------
-			require_once(wire('config')->paths->AllInOneMinify.'lib'.DIRECTORY_SEPARATOR.'JSMin-v1.1.2.php');
+        // ------------------------------------------------------------------------
+        // Check if there is already a combined and cached file. If not, 
+        // generating a new minimized cache file.
+        // ------------------------------------------------------------------------
+        if(!file_exists(wire('config')->paths->assets.self::$cacheDir.DIRECTORY_SEPARATOR.$cacheFile)) {
 
-			// ------------------------------------------------------------------------
-			// Load all content, minimize the contents and paste everything in a 
-			// Varibale together.
-			// ------------------------------------------------------------------------
-			foreach ($javascripts as $javascript) {
-				$_js_src	= file_get_contents($javascript['absolute_path']);
-				$_js_src	= (!empty($_js_src)) ? JSMin::minify($_js_src) : '';
-				$_js 	   .= $_js_src;
-			}
+            // ------------------------------------------------------------------------
+            // Load the minimization Library
+            // ------------------------------------------------------------------------
+            // @source https://github.com/rgrove/jsmin-php
+            // @docs https://github.com/rgrove/jsmin-php
+            // @version 1.1.2
+            // @license MIT License (MIT)
+            // @description PHP implementation of Douglas Crockford's JSMin. This is 
+            //              pretty much a direct port of jsmin.c to PHP with just a few 
+            //              PHP-specific performance tweaks. Also, whereas jsmin.c reads 
+            //              from stdin and outputs to stdout, this library accepts a 
+            //              string as input and returns another string as output.
+            //------------------------------------------------------------------------
+            require_once(wire('config')->paths->AllInOneMinify.'lib'.DIRECTORY_SEPARATOR.'JSMin-v1.1.2.php');
 
-			// ------------------------------------------------------------------------
-			// Write the minimized file to the file system.
-			// ------------------------------------------------------------------------
-			file_put_contents(wire('config')->paths->assets.self::$cacheDir.DIRECTORY_SEPARATOR.$cacheFile, self::_generatorInformation($_js), LOCK_EX);
-			@chmod(wire('config')->paths->assets.self::$cacheDir.DIRECTORY_SEPARATOR.$cacheFile, wire('config')->chmodFile);
-		}
+            // ------------------------------------------------------------------------
+            // Load all content, minimize the contents and paste everything in a 
+            // Varibale together.
+            // ------------------------------------------------------------------------
+            foreach ($javascripts as $javascript) {
+                $_js_src    = file_get_contents($javascript['absolute_path']);
+                $_js_src    = (!empty($_js_src)) ? JSMin::minify($_js_src) : '';
+                $_js       .= $_js_src;
+            }
 
-		// ------------------------------------------------------------------------
-		// Return the absolute URL path to the minimized file.
-		// ------------------------------------------------------------------------
-		return wire('config')->urls->assets.self::$cacheDir.'/'.$cacheFile;
-	}
+            // ------------------------------------------------------------------------
+            // Write the minimized file to the file system.
+            // ------------------------------------------------------------------------
+            file_put_contents(wire('config')->paths->assets.self::$cacheDir.DIRECTORY_SEPARATOR.$cacheFile, self::_generatorInformation($_js), LOCK_EX);
+            @chmod(wire('config')->paths->assets.self::$cacheDir.DIRECTORY_SEPARATOR.$cacheFile, wire('config')->chmodFile);
+        }
 
-	/**
-	 * ------------------------------------------------------------------------
-	 * Minimization and combination of CSS files. Executable from the template 
-	 * with automatic URL rewriting of the CSS URLs.
-	 * ------------------------------------------------------------------------
-	 * @param  mixed $stylesheets  Relative string from the template folder or an array with several files 
-	 *                             relative to the template folder. For example: 'css/file.css' or 
-	 *                             array('css/file1.css', 'css/file2.css')
-	 *                             
-	 * @example <link rel="stylesheet" href="<?php echo AllInOneMinify::CSS(array('css/file1.css', 'css/file2.css')); ?>">
-	 * 
-	 * @return string              URL string of the combined stylesheet file
-	 */
-	public function CSS($stylesheets) {
+        // ------------------------------------------------------------------------
+        // Return the absolute URL path to the minimized file.
+        // ------------------------------------------------------------------------
+        return wire('config')->urls->assets.self::$cacheDir.'/'.$cacheFile;
+    }
 
-		// ------------------------------------------------------------------------
-		// Check if at least one file was passed.
-		// ------------------------------------------------------------------------
-		if(empty($stylesheets)) throw new WireException('There were no files specified to minimize.');
-		
-		// ------------------------------------------------------------------------
-		// Check if files exist and generating the cache file name based 
-		// on the last editing of the file.
-		// ------------------------------------------------------------------------
-		$stylesheets	= is_array($stylesheets) ? $stylesheets : array($stylesheets);
-		$stylesheets	= self::_fileArray($stylesheets, self::$allowedCSSExtension);
-		$cacheFile		= self::_getCacheName($stylesheets, self::$cssCachePrefix, self::$cssCacheExtension);
+    /**
+     * ------------------------------------------------------------------------
+     * Minimization and combination of CSS files. Executable from the template 
+     * with automatic URL rewriting of the CSS URLs.
+     * ------------------------------------------------------------------------
+     * @param  mixed $stylesheets  Relative string from the template folder or an array with several files 
+     *                             relative to the template folder. For example: 'css/file.css' or 
+     *                             array('css/file1.css', 'css/file2.css')
+     *                             
+     * @example <link rel="stylesheet" href="<?php echo AllInOneMinify::CSS(array('css/file1.css', 'css/file2.css')); ?>">
+     * 
+     * @return string              URL string of the combined stylesheet file
+     */
+    public function CSS($stylesheets) {
 
-		// ------------------------------------------------------------------------
-		// Check if there is already a combined and cached file. If not, 
-		// generating a new minimized cache file.
-		// ------------------------------------------------------------------------
-		if(!file_exists(wire('config')->paths->assets.self::$cacheDir.DIRECTORY_SEPARATOR.$cacheFile)) {
+        // ------------------------------------------------------------------------
+        // Check if at least one file was passed.
+        // ------------------------------------------------------------------------
+        if(empty($stylesheets)) throw new WireException('There were no files specified to minimize.');
+        
+        // ------------------------------------------------------------------------
+        // Check if files exist and generating the cache file name based 
+        // on the last editing of the file.
+        // ------------------------------------------------------------------------
+        $stylesheets    = is_array($stylesheets) ? $stylesheets : array($stylesheets);
+        $stylesheets    = self::_fileArray($stylesheets, self::$allowedCSSExtension);
+        $cacheFile      = self::_getCacheName($stylesheets, self::$cssCachePrefix, self::$cssCacheExtension);
 
-			// ------------------------------------------------------------------------
-			// Load the minimization Library
-			// ------------------------------------------------------------------------
-			// @source https://code.google.com/p/cssmin/
-			// @docs https://code.google.com/p/cssmin/wiki/WhatsNewVersion301?tm=6
-			// @version 3.0.1
-			// @license MIT License (MIT)
-			// @description CssMin is a css parser and minfier. It minifies css by 
-			// 				removing unneeded whitespace character, comments, empty 
-			// 				blocks and empty declarations. In addition declaration 
-			// 				values can get rewritten to shorter notation if available. 
-			// 				The minification if configurable. CssMin has some benefits. 
-			// 				It supports the rewrite of CSS Level 3 properties to their 
-			// 				browser specific counterparts and is able to simulate CSS 
-			// 				Variables.
-			//------------------------------------------------------------------------
-			require_once(wire('config')->paths->AllInOneMinify.'lib'.DIRECTORY_SEPARATOR.'CSSMin-v3.0.1.php');
+        // ------------------------------------------------------------------------
+        // Check if there is already a combined and cached file. If not, 
+        // generating a new minimized cache file.
+        // ------------------------------------------------------------------------
+        if(!file_exists(wire('config')->paths->assets.self::$cacheDir.DIRECTORY_SEPARATOR.$cacheFile)) {
 
-			// ------------------------------------------------------------------------
-			// Load the URL Rewriting Library
-			// ------------------------------------------------------------------------
-			// @source https://code.google.com/p/minify/
-			// @docs https://code.google.com/p/minify/wiki/UriRewriting
-			// @version 2.1.7
-			// @license New BSD License
-			// @description This class uses an algorithm to rewrite relative URIs in CSS 
-			// 				output to root-relative URIs so that each link points to the 
-			// 				same location it did in its original file.
-			//------------------------------------------------------------------------
-			require_once(wire('config')->paths->AllInOneMinify.'lib'.DIRECTORY_SEPARATOR.'UriRewriter.php');
+            // ------------------------------------------------------------------------
+            // Load the minimization Library
+            // ------------------------------------------------------------------------
+            // @source https://code.google.com/p/cssmin/
+            // @docs https://code.google.com/p/cssmin/wiki/WhatsNewVersion301?tm=6
+            // @version 3.0.1
+            // @license MIT License (MIT)
+            // @description CssMin is a css parser and minfier. It minifies css by 
+            //              removing unneeded whitespace character, comments, empty 
+            //              blocks and empty declarations. In addition declaration 
+            //              values can get rewritten to shorter notation if available. 
+            //              The minification if configurable. CssMin has some benefits. 
+            //              It supports the rewrite of CSS Level 3 properties to their 
+            //              browser specific counterparts and is able to simulate CSS 
+            //              Variables.
+            //------------------------------------------------------------------------
+            require_once(wire('config')->paths->AllInOneMinify.'lib'.DIRECTORY_SEPARATOR.'CSSMin-v3.0.1.php');
 
-			// ------------------------------------------------------------------------
-			// Configure the plugins and filters for the CSS minimization.
-			// ------------------------------------------------------------------------
-			$css_filters 	= array("ImportImports"                 => false,
-									"RemoveComments"                => true, 
-									"RemoveEmptyRulesets"           => true,
-									"RemoveEmptyAtBlocks"           => true,
-									"ConvertLevel3AtKeyframes"      => false,
-									"ConvertLevel3Properties"       => false,
-									"Variables"                     => true,
-									"RemoveLastDelarationSemiColon" => true);
+            // ------------------------------------------------------------------------
+            // Load the URL Rewriting Library
+            // ------------------------------------------------------------------------
+            // @source https://code.google.com/p/minify/
+            // @docs https://code.google.com/p/minify/wiki/UriRewriting
+            // @version 2.1.7
+            // @license New BSD License
+            // @description This class uses an algorithm to rewrite relative URIs in CSS 
+            //              output to root-relative URIs so that each link points to the 
+            //              same location it did in its original file.
+            //------------------------------------------------------------------------
+            require_once(wire('config')->paths->AllInOneMinify.'lib'.DIRECTORY_SEPARATOR.'UriRewriter.php');
 
-			$css_plugins 	= array("Variables"                     => true,
-									"ConvertFontWeight"             => true,
-									"ConvertHslColors"              => true,
-									"ConvertRgbColors"              => true,
-									"ConvertNamedColors"            => true,
-									"CompressColorValues"           => true,
-									"CompressUnitValues"            => true,
-									"CompressExpressionValues"      => true);
+            // ------------------------------------------------------------------------
+            // Configure the plugins and filters for the CSS minimization.
+            // ------------------------------------------------------------------------
+            $css_filters    = array("ImportImports"                 => false,
+                                    "RemoveComments"                => true, 
+                                    "RemoveEmptyRulesets"           => true,
+                                    "RemoveEmptyAtBlocks"           => true,
+                                    "ConvertLevel3AtKeyframes"      => false,
+                                    "ConvertLevel3Properties"       => false,
+                                    "Variables"                     => true,
+                                    "RemoveLastDelarationSemiColon" => true);
 
-			// ------------------------------------------------------------------------
-			// Load all content, minimize the contents, rewrite the URLs and paste 
-			// everything in a Varibale together.
-			// ------------------------------------------------------------------------
-			foreach ($stylesheets as $stylesheet) {
-				$_css_src	= file_get_contents($stylesheet['absolute_path']);
-				$_css_src	= (!empty($_css_src)) ? CssMin::minify($_css_src, $css_filters, $css_plugins) : '';
-				$_css_src	= (!empty($_css_src)) ? str_replace(array(' !important', ' > ', ' + '), array('!important', '>', '+'), $_css_src) : $_css_src;
-				$_css_src	= (!empty($_css_src)) ? Minify_CSS_UriRewriter::rewrite($_css_src, dirname($stylesheet['absolute_path'])) : $_css_src;
-				$_css 	   .= $_css_src;
-			}
+            $css_plugins    = array("Variables"                     => true,
+                                    "ConvertFontWeight"             => true,
+                                    "ConvertHslColors"              => true,
+                                    "ConvertRgbColors"              => true,
+                                    "ConvertNamedColors"            => true,
+                                    "CompressColorValues"           => true,
+                                    "CompressUnitValues"            => true,
+                                    "CompressExpressionValues"      => true);
 
-			// ------------------------------------------------------------------------
-			// Write the minimized file to the file system.
-			// ------------------------------------------------------------------------
-			file_put_contents(wire('config')->paths->assets.self::$cacheDir.DIRECTORY_SEPARATOR.$cacheFile, self::_generatorInformation($_css), LOCK_EX);
-			@chmod(wire('config')->paths->assets.self::$cacheDir.DIRECTORY_SEPARATOR.$cacheFile, wire('config')->chmodFile);
-		}
+            // ------------------------------------------------------------------------
+            // Load all content, minimize the contents, rewrite the URLs and paste 
+            // everything in a Varibale together.
+            // ------------------------------------------------------------------------
+            foreach ($stylesheets as $stylesheet) {
+                $_css_src   = file_get_contents($stylesheet['absolute_path']);
+                $_css_src   = (!empty($_css_src)) ? CssMin::minify($_css_src, $css_filters, $css_plugins) : '';
+                $_css_src   = (!empty($_css_src)) ? str_replace(array(' !important', ' > ', ' + '), array('!important', '>', '+'), $_css_src) : $_css_src;
+                $_css_src   = (!empty($_css_src)) ? Minify_CSS_UriRewriter::rewrite($_css_src, dirname($stylesheet['absolute_path'])) : $_css_src;
+                $_css      .= $_css_src;
+            }
 
-		// ------------------------------------------------------------------------
-		// Return the absolute URL path to the minimized file.
-		// ------------------------------------------------------------------------
-		return wire('config')->urls->assets.self::$cacheDir.'/'.$cacheFile;
-	}
+            // ------------------------------------------------------------------------
+            // Write the minimized file to the file system.
+            // ------------------------------------------------------------------------
+            file_put_contents(wire('config')->paths->assets.self::$cacheDir.DIRECTORY_SEPARATOR.$cacheFile, self::_generatorInformation($_css), LOCK_EX);
+            @chmod(wire('config')->paths->assets.self::$cacheDir.DIRECTORY_SEPARATOR.$cacheFile, wire('config')->chmodFile);
+        }
 
-	/**
-	 * ------------------------------------------------------------------------
-	 * Check the already cached files according to its maximum lifetime. 
-	 * If the files already exist longer than the maximum time to live, 
-	 * they are deleted.
-	 * ------------------------------------------------------------------------
-	 * @param boolean $force_all Force Delete all the files in the cache folder.
-	 */
-	private function _clearCache($force_all = false) {
-		
-		// ------------------------------------------------------------------------
-		// Generating a data iterator of the cache directory.
-		// ------------------------------------------------------------------------
-		$_cacheFiles = new RecursiveDirectoryIterator(wire('config')->paths->assets.self::$cacheDir.DIRECTORY_SEPARATOR);
+        // ------------------------------------------------------------------------
+        // Return the absolute URL path to the minimized file.
+        // ------------------------------------------------------------------------
+        return wire('config')->urls->assets.self::$cacheDir.'/'.$cacheFile;
+    }
 
-		// ------------------------------------------------------------------------
-		// Remove all files that are older than the maximum lifetime.
-		// ------------------------------------------------------------------------
-		foreach ($_cacheFiles as $_cacheFile) {
-			if((filemtime(wire('config')->paths->assets.self::$cacheDir.DIRECTORY_SEPARATOR.$_cacheFile->getFilename()) + self::$cacheMaxLifetime) < time() OR $force_all === true) {
-				$_file 	= wire('config')->paths->assets.self::$cacheDir.DIRECTORY_SEPARATOR.$_cacheFile->getFilename();
-				@chmod($_file, 0777);
-				@unlink($_file);
-			}
-		}
-	}
+    /**
+     * ------------------------------------------------------------------------
+     * Check the already cached files according to its maximum lifetime. 
+     * If the files already exist longer than the maximum time to live, 
+     * they are deleted.
+     * ------------------------------------------------------------------------
+     * @param boolean $force_all Force Delete all the files in the cache folder.
+     */
+    private function _clearCache($force_all = false) {
+        
+        // ------------------------------------------------------------------------
+        // Generating a data iterator of the cache directory.
+        // ------------------------------------------------------------------------
+        $_cacheFiles = new RecursiveDirectoryIterator(wire('config')->paths->assets.self::$cacheDir.DIRECTORY_SEPARATOR);
 
-	/**
-	 * ------------------------------------------------------------------------
-	 * Generate Created Date and deliver back the data stream.
-	 * ------------------------------------------------------------------------
-	 * @param  string 	$data 	The minimized code
-	 * @return string       	The minimized with code generation information
-	 */
-	private function _generatorInformation($data) {
-		return (!empty($data)) ? '/** Generated: '.date('l, jS \of F Y, h:i:s A').' // Powered by AIOM (All In One Minify) by www.flipzoom.de **/'."\n".$data : '';
-	}
+        // ------------------------------------------------------------------------
+        // Remove all files that are older than the maximum lifetime.
+        // ------------------------------------------------------------------------
+        foreach ($_cacheFiles as $_cacheFile) {
+            if((filemtime(wire('config')->paths->assets.self::$cacheDir.DIRECTORY_SEPARATOR.$_cacheFile->getFilename()) + self::$cacheMaxLifetime) < time() OR $force_all === true) {
+                $_file  = wire('config')->paths->assets.self::$cacheDir.DIRECTORY_SEPARATOR.$_cacheFile->getFilename();
+                @chmod($_file, 0777);
+                @unlink($_file);
+            }
+        }
+    }
 
-	/**
-	 * ------------------------------------------------------------------------
-	 * Create a unique file name, of the files to be combined, based on the 
-	 * last modification.
-	 * ------------------------------------------------------------------------
-	 * @param  array 	$files   An array of all files to be combined.
-	 * @param  string 	$prefix  The prefix of the generated cache file.
-	 * @param  string 	$ext     The file extension of the generated cache file.
-	 * @return string          	 The unique file name of the cache file.
-	 */
-	private function _getCacheName($files, $prefix = 'css_', $ext = '.css') {
-		
-		// ------------------------------------------------------------------------
-		// Combine all timestamps to one string.
-		// ------------------------------------------------------------------------
-		foreach ($files as $file) {
-			$_timestamp .= $file['last_modified'];
-		}
+    /**
+     * ------------------------------------------------------------------------
+     * Generate Created Date and deliver back the data stream.
+     * ------------------------------------------------------------------------
+     * @param  string   $data   The minimized code
+     * @return string           The minimized with code generation information
+     */
+    private function _generatorInformation($data) {
+        return (!empty($data)) ? '/** Generated: '.date('l, jS \of F Y, h:i:s A').' // Powered by AIOM (All In One Minify) by www.flipzoom.de **/'."\n".$data : '';
+    }
 
-		// ------------------------------------------------------------------------
-		// Create a unique MD5 file name with the specified prefix.
-		// ------------------------------------------------------------------------
-		return $prefix.md5($_timestamp).$ext;
-	}
+    /**
+     * ------------------------------------------------------------------------
+     * Create a unique file name, of the files to be combined, based on the 
+     * last modification.
+     * ------------------------------------------------------------------------
+     * @param  array    $files   An array of all files to be combined.
+     * @param  string   $prefix  The prefix of the generated cache file.
+     * @param  string   $ext     The file extension of the generated cache file.
+     * @return string            The unique file name of the cache file.
+     */
+    private function _getCacheName($files, $prefix = 'css_', $ext = '.css') {
+        
+        // ------------------------------------------------------------------------
+        // Combine all timestamps to one string.
+        // ------------------------------------------------------------------------
+        foreach ($files as $file) {
+            $_timestamp .= $file['last_modified'];
+        }
 
-	/**
-	 * ------------------------------------------------------------------------
-	 * Check if a file exists. If so, write the absolute path and the time 
-	 * stamp of the last modification to an array.
-	 * ------------------------------------------------------------------------
-	 * @param  array $files An array of paths to the files.
-	 * @return array        An array of absolute paths and modification 
-	 *                      timestamps of the files.
-	 */
-	private function _fileArray($files, $ext = '.css') {
-		
-		// ------------------------------------------------------------------------
-		// Initialize temporary array
-		// ------------------------------------------------------------------------
-		$_files 	= array();
+        // ------------------------------------------------------------------------
+        // Create a unique MD5 file name with the specified prefix.
+        // ------------------------------------------------------------------------
+        return $prefix.md5($_timestamp).$ext;
+    }
 
-		// ------------------------------------------------------------------------
-		// Check each file on existence and remove paths to prevent from 
-		// Directory traversal attacks.
-		// ------------------------------------------------------------------------
-		foreach ($files as $file) {
-			
-			// ------------------------------------------------------------------------
-			// Filter Directory Traversal
-			// ------------------------------------------------------------------------
-			$_path	= str_ireplace(array('../', './', '%2e%2e%2f', '..%2F'), '', (wire('config')->paths->templates.$file));
-			
-			// ------------------------------------------------------------------------
-			// Check existence and whether there is no external source.
-			// ------------------------------------------------------------------------
-			if(file_exists($_path) && !stristr($_path, '//') && stristr($_path, $ext)) {
-				$_files[]	= array('absolute_path' => $_path, 
-									'last_modified'	=> filemtime($_path));
-			}
-		}
+    /**
+     * ------------------------------------------------------------------------
+     * Check if a file exists. If so, write the absolute path and the time 
+     * stamp of the last modification to an array.
+     * ------------------------------------------------------------------------
+     * @param  array $files An array of paths to the files.
+     * @return array        An array of absolute paths and modification 
+     *                      timestamps of the files.
+     */
+    private function _fileArray($files, $ext = '.css') {
+        
+        // ------------------------------------------------------------------------
+        // Initialize temporary array
+        // ------------------------------------------------------------------------
+        $_files     = array();
 
-		// ------------------------------------------------------------------------
-		// Return array with all valid file paths and timestamps.
-		// ------------------------------------------------------------------------
-		return $_files;
-	}
+        // ------------------------------------------------------------------------
+        // Check each file on existence and remove paths to prevent from 
+        // Directory traversal attacks.
+        // ------------------------------------------------------------------------
+        foreach ($files as $file) {
+            
+            // ------------------------------------------------------------------------
+            // Filter Directory Traversal
+            // ------------------------------------------------------------------------
+            $_path  = str_ireplace(array('../', './', '%2e%2e%2f', '..%2F'), '', (wire('config')->paths->templates.$file));
+            
+            // ------------------------------------------------------------------------
+            // Check existence and whether there is no external source.
+            // ------------------------------------------------------------------------
+            if(file_exists($_path) && !stristr($_path, '//') && stristr($_path, $ext)) {
+                $_files[]   = array('absolute_path' => $_path, 
+                                    'last_modified' => filemtime($_path));
+            }
+        }
 
-	/**
-	 * ------------------------------------------------------------------------
-	 * Minify HTML but protect textareas, code fields and conditional comments 
-	 * for Internet Explorer. Optional minify inline stylesheets and javascript.
-	 * ------------------------------------------------------------------------
-	 * @param  [type] $event [description]
-	 * @return [type]        [description]
-	 */
-	protected function HTML($event) {
-		// ------------------------------------------------------------------------
-		// Don't process the admin pages
-		// ------------------------------------------------------------------------
-		if($event->object->template == 'admin') return;
+        // ------------------------------------------------------------------------
+        // Return array with all valid file paths and timestamps.
+        // ------------------------------------------------------------------------
+        return $_files;
+    }
 
-		// ------------------------------------------------------------------------
-		// Minify HTML source code
-		// ------------------------------------------------------------------------
-		$event->return = preg_replace('/<!--(?!\s*(?:\[if [^\]]+]|<!|>))(?:(?!-->).)*-->/s', '', $event->return);
-		$event->return = preg_replace('/>\s+</s', '><', $event->return);
-	}
+    /**
+     * ------------------------------------------------------------------------
+     * Minify HTML but protect textareas, code fields and conditional comments 
+     * for Internet Explorer. Optional minify inline stylesheets and javascript.
+     * ------------------------------------------------------------------------
+     * @param  [type] $event
+     * @return [type]
+     */
+    protected function HTML($event) {
+
+        // ------------------------------------------------------------------------
+        // Don't process the admin pages
+        // ------------------------------------------------------------------------
+        if($event->object->template == 'admin') return;
+
+        // ------------------------------------------------------------------------
+        // Minify HTML source code
+        // ------------------------------------------------------------------------
+        $event->return = preg_replace('/<!--(?!\s*(?:\[if [^\]]+]|<!|>))(?:(?!-->).)*-->/s', '', $event->return);
+        $event->return = preg_replace('/>\s+</s', '><', $event->return);
+    }
 }
