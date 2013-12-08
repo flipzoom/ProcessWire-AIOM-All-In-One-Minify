@@ -13,6 +13,7 @@ AIOM (All In One Minify) is a module to easily improve the performance of the we
 * The maximum lifetime of the generated files is 4 weeks. This can be changed via the configuration in the module.
 * The generated files can be equipped with a prefix.
 * A file is generated which is composed according to this scheme: **prefix_md5-timestamp.extension** for example: **css_031ea978b0e6486c828ba444c6297ca5.css** – ___There is no modification of the .htaccess file is necessary.___
+* If you change something in the source CSS or JS files, a new combined version is created automatically.
 
 ##Installation##
 
