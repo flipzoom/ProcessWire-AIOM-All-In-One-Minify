@@ -108,7 +108,6 @@ Send me an E-Mail with your questions, suggestions or bugs to support@flipzoom.d
 * Compile the CSS and JS files when saving / updating the template in the admin area.
 * Configuration via the backend
 * .htaccess Improvement Tips
-* Development mode
 * Inline minimizing for css and js in HTML source code
 
 - - - 
