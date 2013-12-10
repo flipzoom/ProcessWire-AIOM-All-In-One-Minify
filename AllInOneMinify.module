@@ -32,42 +32,52 @@ class AllInOneMinify extends WireData implements Module {
     // ------------------------------------------------------------------------
     // Name of the cache folder.
     // ------------------------------------------------------------------------
-    private static $cacheDir               = 'aiom';
+    private static $cacheDir                = 'aiom';
 
     // ------------------------------------------------------------------------
     // Duration in seconds before a combined file is automatically deleted.
     // ------------------------------------------------------------------------
-    private static $cacheMaxLifetime       = 2419200; // 2419200 Seconds = 4 Weeks
+    private static $cacheMaxLifetime        = 2419200; // 2419200 Seconds = 4 Weeks
 
     // ------------------------------------------------------------------------
     // Allowed file extension of the stylesheets to combine them.
     // ------------------------------------------------------------------------
-    private static $allowedCSSExtension    = '.css';
+    private static $allowedCSSExtension     = '.css';
 
     // ------------------------------------------------------------------------
     // File extension of the combined file.
     // ------------------------------------------------------------------------
-    private static $cssCacheExtension      = '.css';
+    private static $cssCacheExtension       = '.css';
 
     // ------------------------------------------------------------------------
     // Prefix of the combined file.
     // ------------------------------------------------------------------------
-    private static $cssCachePrefix         = 'css_';
+    private static $cssCachePrefix          = 'css_';
 
     // ------------------------------------------------------------------------
     // Allowed file extension of the javascripts to combine them.
     // ------------------------------------------------------------------------
-    private static $allowedJSExtension     = '.js';
+    private static $allowedJSExtension      = '.js';
 
     // ------------------------------------------------------------------------
     // File extension of the combined file.
     // ------------------------------------------------------------------------
-    private static $jsCacheExtension       = '.js';
+    private static $jsCacheExtension        = '.js';
 
     // ------------------------------------------------------------------------
     // Prefix of the combined file.
     // ------------------------------------------------------------------------
-    private static $jsCachePrefix          = 'js_';
+    private static $jsCachePrefix           = 'js_';
+
+    // ------------------------------------------------------------------------
+    // Enable or disable HTML source code minify (default: true)
+    // ------------------------------------------------------------------------
+    private static $enableHTMLMinify        = true;
+
+    // ------------------------------------------------------------------------
+    // Enable or disable development mode (Combine but no minimizing)
+    // ------------------------------------------------------------------------
+    private static $developmentMode         = false;
 
     /**
      * ------------------------------------------------------------------------
@@ -87,9 +97,9 @@ class AllInOneMinify extends WireData implements Module {
             'title' => 'AIOM (All In One Minify) for CSS, JS and HTML', 
 
             // ------------------------------------------------------------------------
-            // Version: major, minor, revision, i.e. 100 = 1.0.0
+            // Version: major, minor, revision, i.e. 100 = 1.1.0
             // ------------------------------------------------------------------------
-            'version' => 100, 
+            'version' => 110, 
 
             // ------------------------------------------------------------------------
             // Summary is brief description of what this module is
@@ -134,7 +144,7 @@ class AllInOneMinify extends WireData implements Module {
         // ------------------------------------------------------------------------
         try {
             
-            mkdir(wire('config')->paths->assets.self::$cacheDir.DIRECTORY_SEPARATOR, wire('config')->chmodDir, true);
+            wireMkdir(wire('config')->paths->assets.self::$cacheDir.DIRECTORY_SEPARATOR);
 
         // ------------------------------------------------------------------------
         // If the folder can not be created, trigger an error.
@@ -204,10 +214,6 @@ class AllInOneMinify extends WireData implements Module {
         // If so, remove those files.
         // ------------------------------------------------------------------------
         self::_clearCache();
-
-        // TODO: ADD HOOK, AFTER PAGE SAVE, LOAD TEMPLATE AND SEARCH FOR STYLES, JS
-        // ########################################################################
-        
     }
 
     /**
@@ -241,7 +247,7 @@ class AllInOneMinify extends WireData implements Module {
         // Check if there is already a combined and cached file. If not, 
         // generating a new minimized cache file.
         // ------------------------------------------------------------------------
-        if(!file_exists(wire('config')->paths->assets.self::$cacheDir.DIRECTORY_SEPARATOR.$cacheFile)) {
+        if(!file_exists(wire('config')->paths->assets.self::$cacheDir.DIRECTORY_SEPARATOR.$cacheFile) OR self::$developmentMode === true) {
 
             // ------------------------------------------------------------------------
             // Load the minimization Library
@@ -263,8 +269,8 @@ class AllInOneMinify extends WireData implements Module {
             // Varibale together.
             // ------------------------------------------------------------------------
             foreach ($javascripts as $javascript) {
-                $_js_src    = file_get_contents($javascript['absolute_path']);
-                $_js_src    = (!empty($_js_src)) ? JSMin::minify($_js_src) : '';
+                $_js_src    = file_get_contents($javascript['absolute_path'])."\n";
+                $_js_src    = (!empty($_js_src) AND self::$developmentMode !== true) ? JSMin::minify($_js_src) : $_js_src;
                 $_js       .= $_js_src;
             }
 
@@ -272,13 +278,13 @@ class AllInOneMinify extends WireData implements Module {
             // Write the minimized file to the file system.
             // ------------------------------------------------------------------------
             file_put_contents(wire('config')->paths->assets.self::$cacheDir.DIRECTORY_SEPARATOR.$cacheFile, self::_generatorInformation($_js), LOCK_EX);
-            @chmod(wire('config')->paths->assets.self::$cacheDir.DIRECTORY_SEPARATOR.$cacheFile, wire('config')->chmodFile);
+            chmod(wire('config')->paths->assets.self::$cacheDir.DIRECTORY_SEPARATOR.$cacheFile, octdec(wire('config')->chmodFile));
         }
 
         // ------------------------------------------------------------------------
         // Return the absolute URL path to the minimized file.
         // ------------------------------------------------------------------------
-        return wire('config')->urls->assets.self::$cacheDir.'/'.$cacheFile;
+        return (self::$developmentMode !== true) ? wire('config')->urls->assets.self::$cacheDir.'/'.$cacheFile : wire('config')->urls->assets.self::$cacheDir.'/'.$cacheFile.'?no-cache='.time();
     }
 
     /**
@@ -313,7 +319,7 @@ class AllInOneMinify extends WireData implements Module {
         // Check if there is already a combined and cached file. If not, 
         // generating a new minimized cache file.
         // ------------------------------------------------------------------------
-        if(!file_exists(wire('config')->paths->assets.self::$cacheDir.DIRECTORY_SEPARATOR.$cacheFile)) {
+        if(!file_exists(wire('config')->paths->assets.self::$cacheDir.DIRECTORY_SEPARATOR.$cacheFile) OR self::$developmentMode === true) {
 
             // ------------------------------------------------------------------------
             // Load the minimization Library
@@ -355,26 +361,29 @@ class AllInOneMinify extends WireData implements Module {
                                     "RemoveEmptyAtBlocks"           => true,
                                     "ConvertLevel3AtKeyframes"      => false,
                                     "ConvertLevel3Properties"       => false,
-                                    "Variables"                     => true,
+                                    "Variables"                     => false,
                                     "RemoveLastDelarationSemiColon" => true);
 
-            $css_plugins    = array("Variables"                     => true,
-                                    "ConvertFontWeight"             => true,
-                                    "ConvertHslColors"              => true,
-                                    "ConvertRgbColors"              => true,
-                                    "ConvertNamedColors"            => true,
-                                    "CompressColorValues"           => true,
-                                    "CompressUnitValues"            => true,
-                                    "CompressExpressionValues"      => true);
+            $css_plugins    = array("Variables"                     => false,
+                                    "ConvertFontWeight"             => false,
+                                    "ConvertHslColors"              => false,
+                                    "ConvertRgbColors"              => false,
+                                    "ConvertNamedColors"            => false,
+                                    "CompressColorValues"           => false,
+                                    "CompressUnitValues"            => false,
+                                    "CompressExpressionValues"      => false);
+
+            $custom_search  = array(' !important',  ' > ',  ' + ');
+            $custom_replace = array('!important',   '>',    '+');
 
             // ------------------------------------------------------------------------
             // Load all content, minimize the contents, rewrite the URLs and paste 
             // everything in a Varibale together.
             // ------------------------------------------------------------------------
             foreach ($stylesheets as $stylesheet) {
-                $_css_src   = file_get_contents($stylesheet['absolute_path']);
-                $_css_src   = (!empty($_css_src)) ? CssMin::minify($_css_src, $css_filters, $css_plugins) : '';
-                $_css_src   = (!empty($_css_src)) ? str_replace(array(' !important', ' > ', ' + '), array('!important', '>', '+'), $_css_src) : $_css_src;
+                $_css_src   = file_get_contents($stylesheet['absolute_path'])."\n";
+                $_css_src   = (!empty($_css_src) AND self::$developmentMode !== true) ? CssMin::minify($_css_src, $css_filters, $css_plugins) : $_css_src;
+                $_css_src   = (!empty($_css_src) AND self::$developmentMode !== true) ? str_replace($custom_search, $custom_replace, $_css_src) : $_css_src;
                 $_css_src   = (!empty($_css_src)) ? Minify_CSS_UriRewriter::rewrite($_css_src, dirname($stylesheet['absolute_path'])) : $_css_src;
                 $_css      .= $_css_src;
             }
@@ -383,13 +392,13 @@ class AllInOneMinify extends WireData implements Module {
             // Write the minimized file to the file system.
             // ------------------------------------------------------------------------
             file_put_contents(wire('config')->paths->assets.self::$cacheDir.DIRECTORY_SEPARATOR.$cacheFile, self::_generatorInformation($_css), LOCK_EX);
-            @chmod(wire('config')->paths->assets.self::$cacheDir.DIRECTORY_SEPARATOR.$cacheFile, wire('config')->chmodFile);
+            chmod(wire('config')->paths->assets.self::$cacheDir.DIRECTORY_SEPARATOR.$cacheFile, octdec(wire('config')->chmodFile));
         }
 
         // ------------------------------------------------------------------------
         // Return the absolute URL path to the minimized file.
         // ------------------------------------------------------------------------
-        return wire('config')->urls->assets.self::$cacheDir.'/'.$cacheFile;
+        return (self::$developmentMode !== true) ? wire('config')->urls->assets.self::$cacheDir.'/'.$cacheFile : wire('config')->urls->assets.self::$cacheDir.'/'.$cacheFile.'?no-cache='.time();
     }
 
     /**
@@ -413,8 +422,8 @@ class AllInOneMinify extends WireData implements Module {
         foreach ($_cacheFiles as $_cacheFile) {
             if((filemtime(wire('config')->paths->assets.self::$cacheDir.DIRECTORY_SEPARATOR.$_cacheFile->getFilename()) + self::$cacheMaxLifetime) < time() OR $force_all === true) {
                 $_file  = wire('config')->paths->assets.self::$cacheDir.DIRECTORY_SEPARATOR.$_cacheFile->getFilename();
-                @chmod($_file, 0777);
-                @unlink($_file);
+                chmod($_file, 0777);
+                unlink($_file);
             }
         }
     }
@@ -452,7 +461,7 @@ class AllInOneMinify extends WireData implements Module {
         // ------------------------------------------------------------------------
         // Create a unique MD5 file name with the specified prefix.
         // ------------------------------------------------------------------------
-        return $prefix.md5($_timestamp).$ext;
+        return (self::$developmentMode !== true) ? $prefix.md5($_timestamp).$ext : $prefix.md5($_timestamp).'_dev'.$ext;
     }
 
     /**
@@ -485,7 +494,7 @@ class AllInOneMinify extends WireData implements Module {
             // ------------------------------------------------------------------------
             // Check existence and whether there is no external source.
             // ------------------------------------------------------------------------
-            if(file_exists($_path) && !stristr($_path, '//') && stristr($_path, $ext)) {
+            if(file_exists($_path) AND !stristr($_path, '//') AND stristr($_path, $ext)) {
                 $_files[]   = array('absolute_path' => $_path, 
                                     'last_modified' => filemtime($_path));
             }
@@ -510,7 +519,7 @@ class AllInOneMinify extends WireData implements Module {
         // ------------------------------------------------------------------------
         // Don't process the admin pages
         // ------------------------------------------------------------------------
-        if($event->object->template == 'admin') return;
+        if($event->object->template == 'admin' OR self::$enableHTMLMinify !== true OR self::$developmentMode === true) return;
 
         // ------------------------------------------------------------------------
         // Minify HTML source code
@@ -519,3 +528,10 @@ class AllInOneMinify extends WireData implements Module {
         $event->return = preg_replace('/>\s+</s', '><', $event->return);
     }
 }
+
+/**
+ * ------------------------------------------------------------------------
+ * Short-Syntax
+ * ------------------------------------------------------------------------
+ */
+class AIOM extends AllInOneMinify {}
