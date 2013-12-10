@@ -269,7 +269,7 @@ class AllInOneMinify extends WireData implements Module {
             // Varibale together.
             // ------------------------------------------------------------------------
             foreach ($javascripts as $javascript) {
-                $_js_src    = file_get_contents($javascript['absolute_path'])."\n";
+                $_js_src    = file_get_contents($javascript['absolute_path']).PHP_EOL;
                 $_js_src    = (!empty($_js_src) AND self::$developmentMode !== true) ? JSMin::minify($_js_src) : $_js_src;
                 $_js       .= $_js_src;
             }
@@ -381,7 +381,7 @@ class AllInOneMinify extends WireData implements Module {
             // everything in a Varibale together.
             // ------------------------------------------------------------------------
             foreach ($stylesheets as $stylesheet) {
-                $_css_src   = file_get_contents($stylesheet['absolute_path'])."\n";
+                $_css_src   = file_get_contents($stylesheet['absolute_path']).PHP_EOL;
                 $_css_src   = (!empty($_css_src) AND self::$developmentMode !== true) ? CssMin::minify($_css_src, $css_filters, $css_plugins) : $_css_src;
                 $_css_src   = (!empty($_css_src) AND self::$developmentMode !== true) ? str_replace($custom_search, $custom_replace, $_css_src) : $_css_src;
                 $_css_src   = (!empty($_css_src)) ? Minify_CSS_UriRewriter::rewrite($_css_src, dirname($stylesheet['absolute_path'])) : $_css_src;
@@ -436,7 +436,7 @@ class AllInOneMinify extends WireData implements Module {
      * @return string           The minimized with code generation information
      */
     private function _generatorInformation($data) {
-        return (!empty($data)) ? '/** Generated: '.date('l, jS \of F Y, h:i:s A').' // Powered by AIOM (All In One Minify) by www.flipzoom.de **/'."\n".$data : '';
+        return (!empty($data)) ? '/** Generated: '.date('l, jS \of F Y, h:i:s A').' // Powered by AIOM (All In One Minify) by www.flipzoom.de **/'.PHP_EOL.$data : '';
     }
 
     /**
