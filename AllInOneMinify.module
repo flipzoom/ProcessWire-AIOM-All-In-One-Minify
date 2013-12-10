@@ -142,15 +142,11 @@ class AllInOneMinify extends WireData implements Module {
         // ------------------------------------------------------------------------
         // Try to create the folder recursively.
         // ------------------------------------------------------------------------
-        try {
+        if(wireMkdir(wire('config')->paths->assets.self::$cacheDir.DIRECTORY_SEPARATOR) === false) {
             
-            wireMkdir(wire('config')->paths->assets.self::$cacheDir.DIRECTORY_SEPARATOR);
-
-        // ------------------------------------------------------------------------
-        // If the folder can not be created, trigger an error.
-        // ------------------------------------------------------------------------
-        } catch (Exception $e) {
-
+            // ------------------------------------------------------------------------
+            // If the folder can not be created, trigger an error.
+            // ------------------------------------------------------------------------
             throw new WireException('The cache folder ('.wire('config')->paths->assets.self::$cacheDir.DIRECTORY_SEPARATOR.') could not be created.');
         }
     }
@@ -168,26 +164,18 @@ class AllInOneMinify extends WireData implements Module {
         if(!is_dir(wire('config')->paths->assets.self::$cacheDir.DIRECTORY_SEPARATOR)) return true;
 
         // ------------------------------------------------------------------------
+        // Remove all combined files in the cache folder.
+        // ------------------------------------------------------------------------
+        self::_clearCache(true);
+
+        // ------------------------------------------------------------------------
         // Try to remove the cache folder.
         // ------------------------------------------------------------------------
-        try {
+        if(chmod(wire('config')->paths->assets.self::$cacheDir.DIRECTORY_SEPARATOR, 0777) === false OR rmdir(wire('config')->paths->assets.self::$cacheDir.DIRECTORY_SEPARATOR) === false) {
 
             // ------------------------------------------------------------------------
-            // Remove all combined files in the cache folder.
+            // If the folder and files can not be removed, trigger an error.
             // ------------------------------------------------------------------------
-            self::_clearCache(true);
-
-            // ------------------------------------------------------------------------
-            // Remove cache folder.
-            // ------------------------------------------------------------------------
-            chmod(wire('config')->paths->assets.self::$cacheDir.DIRECTORY_SEPARATOR, 0777);
-            rmdir(wire('config')->paths->assets.self::$cacheDir.DIRECTORY_SEPARATOR);
-
-        // ------------------------------------------------------------------------
-        // If the folder and files can not be removed, trigger an error.
-        // ------------------------------------------------------------------------
-        } catch (Exception $e) {
-
             throw new WireException('The cache folder ('.wire('config')->paths->assets.self::$cacheDir.DIRECTORY_SEPARATOR.') and files could not be removed.');
         }
     }
@@ -277,8 +265,9 @@ class AllInOneMinify extends WireData implements Module {
             // ------------------------------------------------------------------------
             // Write the minimized file to the file system.
             // ------------------------------------------------------------------------
-            file_put_contents(wire('config')->paths->assets.self::$cacheDir.DIRECTORY_SEPARATOR.$cacheFile, self::_generatorInformation($_js), LOCK_EX);
-            chmod(wire('config')->paths->assets.self::$cacheDir.DIRECTORY_SEPARATOR.$cacheFile, octdec(wire('config')->chmodFile));
+            if(file_put_contents(wire('config')->paths->assets.self::$cacheDir.DIRECTORY_SEPARATOR.$cacheFile, self::_generatorInformation($_js), LOCK_EX) === false OR chmod(wire('config')->paths->assets.self::$cacheDir.DIRECTORY_SEPARATOR.$cacheFile, octdec(wire('config')->chmodFile)) === false) {
+                throw new WireException('The combined js cache file could not be created.');
+            }
         }
 
         // ------------------------------------------------------------------------
@@ -391,8 +380,9 @@ class AllInOneMinify extends WireData implements Module {
             // ------------------------------------------------------------------------
             // Write the minimized file to the file system.
             // ------------------------------------------------------------------------
-            file_put_contents(wire('config')->paths->assets.self::$cacheDir.DIRECTORY_SEPARATOR.$cacheFile, self::_generatorInformation($_css), LOCK_EX);
-            chmod(wire('config')->paths->assets.self::$cacheDir.DIRECTORY_SEPARATOR.$cacheFile, octdec(wire('config')->chmodFile));
+            if(file_put_contents(wire('config')->paths->assets.self::$cacheDir.DIRECTORY_SEPARATOR.$cacheFile, self::_generatorInformation($_css), LOCK_EX) === false OR chmod(wire('config')->paths->assets.self::$cacheDir.DIRECTORY_SEPARATOR.$cacheFile, octdec(wire('config')->chmodFile)) === false) {
+                throw new WireException('The combined css cache file could not be created.');
+            }
         }
 
         // ------------------------------------------------------------------------
@@ -422,8 +412,8 @@ class AllInOneMinify extends WireData implements Module {
         foreach ($_cacheFiles as $_cacheFile) {
             if((filemtime(wire('config')->paths->assets.self::$cacheDir.DIRECTORY_SEPARATOR.$_cacheFile->getFilename()) + self::$cacheMaxLifetime) < time() OR $force_all === true) {
                 $_file  = wire('config')->paths->assets.self::$cacheDir.DIRECTORY_SEPARATOR.$_cacheFile->getFilename();
-                chmod($_file, 0777);
-                unlink($_file);
+                @chmod($_file, 0777);
+                @unlink($_file);
             }
         }
     }
