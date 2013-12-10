@@ -80,6 +80,10 @@ To enable the development mode, set the value of variable **"private static $dev
 
 ##Changelog##
 
+1.1.1  
+
+* CSS filter update
+
 1.1.0  
 
 * BugFix ([#1](https://github.com/FlipZoomMedia/ProcessWire-AIOM-All-In-One-Minify/issues/1)): Error: Exception: RecursiveDirectoryIterator ... Permission denied (Thanks to JoZ3 and Ryan)
