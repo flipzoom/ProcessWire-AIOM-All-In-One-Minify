@@ -109,6 +109,7 @@ Send me an E-Mail with your questions, suggestions or bugs to support@flipzoom.d
 * Configuration via the backend
 * .htaccess Improvement Tips
 * Inline minimizing for css and js in HTML source code
+* Domain sharding option via backend
 
 - - - 
 
