@@ -99,7 +99,7 @@ class AllInOneMinify extends WireData implements Module {
             // ------------------------------------------------------------------------
             // Version: major, minor, revision, i.e. 100 = 1.1.0
             // ------------------------------------------------------------------------
-            'version' => 110, 
+            'version' => 111, 
 
             // ------------------------------------------------------------------------
             // Summary is brief description of what this module is
@@ -362,8 +362,8 @@ class AllInOneMinify extends WireData implements Module {
                                     "CompressUnitValues"            => false,
                                     "CompressExpressionValues"      => false);
 
-            $custom_search  = array(' !important',  ' > ',  ' + ');
-            $custom_replace = array('!important',   '>',    '+');
+            $custom_search  = array(' !important', ' > ', ' + ', ', ');
+            $custom_replace = array('!important', '>', '+', ',');
 
             // ------------------------------------------------------------------------
             // Load all content, minimize the contents, rewrite the URLs and paste 
@@ -412,8 +412,8 @@ class AllInOneMinify extends WireData implements Module {
         foreach ($_cacheFiles as $_cacheFile) {
             if((filemtime(wire('config')->paths->assets.self::$cacheDir.DIRECTORY_SEPARATOR.$_cacheFile->getFilename()) + self::$cacheMaxLifetime) < time() OR $force_all === true) {
                 $_file  = wire('config')->paths->assets.self::$cacheDir.DIRECTORY_SEPARATOR.$_cacheFile->getFilename();
-                @chmod($_file, 0777);
-                @unlink($_file);
+                chmod($_file, 0777);
+                unlink($_file);
             }
         }
     }
