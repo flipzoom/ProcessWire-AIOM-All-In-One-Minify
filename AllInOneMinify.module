@@ -313,9 +313,9 @@ class AllInOneMinify extends WireData implements Module, ConfigurableModule {
         $this->development_mode     = 0;
 
         // ------------------------------------------------------------------------
-        // Cookie-less domain for parallel Asset downloads. Must point to web root.
+        // Cookieless domain for parallel asset downloads. Must point to webroot.
         // Use a CNAME DNS record. If empty, the default URL will be used. 
-        // Format: http(s)://static.mydomain.com/ (with a concluding Slash)
+        // Format: http(s)://static.mydomain.com (without a concluding slash)
         // ------------------------------------------------------------------------
         $this->domain_sharding      = '';
         $this->domain_sharding_ssl  = '';
