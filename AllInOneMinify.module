@@ -91,7 +91,7 @@ class AllInOneMinify extends WireData implements Module, ConfigurableModule {
             // Note that autoload modules are almost always also 'singular' (seen above).
             // ------------------------------------------------------------------------
             'autoload' => true, 
-            );
+        );
     }
 
     /**
