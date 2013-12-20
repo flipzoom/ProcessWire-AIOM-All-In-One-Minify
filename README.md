@@ -9,10 +9,11 @@ AIOM (All In One Minify) is a module to easily improve the performance of the we
 
 ####Information####
 
-* All the paths for the minimization are relative to the template folder.
-* The maximum lifetime of the generated files is 4 weeks. This can be changed via the configuration in the module.
-* A file is generated which is composed according to this scheme: **prefix_md5-timestamp.extension** for example: css_031ea978b0e6486c828ba444c6297ca5.css – ___There is no modification of the .htaccess file is necessary.___
-* If you change something in the source CSS or JS files, a new combined version is created automatically.
+* All paths are relative to the template folder. URLs will be automatically corrected. Nothing needs to be changed.
+* If you make changes to the source stylesheet and javascript files, a new combined version is created automatically.
+* All parameters can be adjusted via the backend.
+* During development, you can enable developer mode. Files are combined, but not minimized and browser caching is prevented.
+* You can use the short syntax or use the full class name.
 
 ##Installation##
 
@@ -62,23 +63,25 @@ site/
 
 ##Minimize HTML##
 
-The generated HTML source code is automatically minimized when rendering. This requires no change to the templates must be made. Conditional Comments, textareas, code tags, etc. is excluded from the minimization.
+The generated HTML source code is automatically minimized when rendering. This requires no change to the templates. Conditional Comments, textareas, code tags, etc. are excluded from the minimization.
 
 ##Development mode##
 
-If you are currently in development of the site, caching can be a problem. For this, you can enable the development mode since version 1.1.0. The files will be combined, but not minimized and re-generated at each call. In addition, a no-cache GET parameter is appended with a timestamp to prevent the browser caching.  
+If you are currently in development of the site, caching can be a problem. For this, you can enable the development mode since version 1.1.0 in the Backend (Module > AIOM > Config). The files will be combined, but not minimized and re-generated at each call. In addition, a no-cache GET parameter is appended with a timestamp to prevent the browser caching.  
 **For example: css_031ea978b0e6486c828ba444c6297ca5_dev.css?no-cache=1335939007**
 
-```php
-// ------------------------------------------------------------------------
-// Enable or disable development mode (Combine but no minimizing)
-// ------------------------------------------------------------------------
-private static $developmentMode = true;
-```
-
-To enable the development mode, set the value of variable **"private static $developmentMode"** in the file **"AllInOneMinify.module"** to **"true"**. We are working to make this editable via the backend.
-
 ##Changelog##
+
+2.0.0
+
+* Configurable backend (Prefix, lifetime, dev-mode and tips)
+* Empty cache on the backend
+* Domain sharding / cookieless domain
+* Domain sharding for SSL
+* Performance updates
+* Quick introduction in the backend
+* Performance tips in the backend
+* .htacces instructions for domain sharding in the backend
 
 1.1.1  
 
@@ -109,11 +112,8 @@ Send me an E-Mail with your questions, suggestions or bugs to support@flipzoom.d
 
 ##To-do##
 
-* Compile the CSS and JS files when saving / updating the template in the admin area.
-* Configuration via the backend
-* .htaccess Improvement Tips
+* More .htaccess Improvement Tips
 * Inline minimizing for css and js in HTML source code
-* Domain sharding option via backend
 
 - - - 
 
