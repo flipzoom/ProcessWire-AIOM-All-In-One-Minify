@@ -34,7 +34,7 @@ Minimize multiple files into one file.
 <link rel="stylesheet" href="<?php echo AllInOneMinify::CSS(array('css/file-1.css', 'css/file-2.css', 'css/file-3.css', 'css/file-4.css')); ?>">
 ```
 
-**Tip:** You can also use the short syntax **"AIOM"**. For example, **"AIOM::CSS()**".
+**Tip:** You can also use the short syntax **"AIOM"**. For example, ```AIOM::CSS()```.
 
 ##Minimize Javascripts##
 
@@ -50,7 +50,7 @@ Minimize multiple files into one file.
 <script src="<?php echo AllInOneMinify::JS(array('js/file-1.js', 'js/file-2.js', 'js/file-3.js', 'js/file-4.js')); ?>"></script>
 ```
 
-**Tip:** You can also use the short syntax **"AIOM"**. For example, **"AIOM::JS()**".
+**Tip:** You can also use the short syntax **"AIOM"**. For example, ```AIOM::JS()```.
 
 ##Exemplary template structure##
 
@@ -67,8 +67,7 @@ The generated HTML source code is automatically minimized when rendering. This r
 
 ##Development mode##
 
-If you are currently in development of the site, caching can be a problem. For this, you can enable the development mode since version 1.1.0 in the Backend (Module > AIOM > Config). The files will be combined, but not minimized and re-generated at each call. In addition, a no-cache GET parameter is appended with a timestamp to prevent the browser caching.  
-**For example: css_031ea978b0e6486c828ba444c6297ca5_dev.css?no-cache=1335939007**
+If you are currently in development of the site, caching can be a problem. For this, you can enable the development mode since version 1.1.0 in the Backend (Module > AIOM > Config). The files will be combined, but not minimized and re-generated at each call. In addition, a no-cache GET parameter is appended with a timestamp to prevent the browser caching. For example: ```css_031ea978b0e6486c828ba444c6297ca5_dev.css?no-cache=1335939007```
 
 ##Changelog##
 
@@ -81,7 +80,7 @@ If you are currently in development of the site, caching can be a problem. For t
 * Performance updates
 * Quick introduction in the backend
 * Performance tips in the backend
-* .htacces instructions for domain sharding in the backend
+* .htaccess instructions for domain sharding in the backend
 
 1.1.1  
 
