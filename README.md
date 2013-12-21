@@ -71,13 +71,18 @@ If you are currently in development of the site, caching can be a problem. For t
 
 ##Changelog##
 
+2.1.0
+
+* New CSS minimization library
+* Performance improvements
+
 2.0.0
 
 * Configurable backend (Prefix, lifetime, dev-mode and tips)
 * Empty cache on the backend
 * Domain sharding / cookieless domain
 * Domain sharding for SSL
-* Performance updates
+* Performance improvements
 * Quick introduction in the backend
 * Performance tips in the backend
 * .htaccess instructions for domain sharding in the backend
