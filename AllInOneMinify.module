@@ -66,7 +66,7 @@ class AllInOneMinify extends WireData implements Module, ConfigurableModule {
             // ------------------------------------------------------------------------
             // Version: major, minor, revision, i.e. 100 = 1.1.0
             // ------------------------------------------------------------------------
-            'version' => 200, 
+            'version' => 210, 
 
             // ------------------------------------------------------------------------
             // Summary is brief description of what this module is
@@ -91,7 +91,7 @@ class AllInOneMinify extends WireData implements Module, ConfigurableModule {
             // Note that autoload modules are almost always also 'singular' (seen above).
             // ------------------------------------------------------------------------
             'autoload' => true, 
-        );
+            );
     }
 
     /**
@@ -313,9 +313,9 @@ class AllInOneMinify extends WireData implements Module, ConfigurableModule {
         $this->development_mode     = 0;
 
         // ------------------------------------------------------------------------
-        // Cookieless domain for parallel asset downloads. Must point to webroot.
+        // Cookie-less domain for parallel Asset downloads. Must point to web root.
         // Use a CNAME DNS record. If empty, the default URL will be used. 
-        // Format: http(s)://static.mydomain.com (without a concluding slash)
+        // Format: http(s)://static.mydomain.com/ (with a concluding Slash)
         // ------------------------------------------------------------------------
         $this->domain_sharding      = '';
         $this->domain_sharding_ssl  = '';
@@ -478,20 +478,14 @@ class AllInOneMinify extends WireData implements Module, ConfigurableModule {
             // ------------------------------------------------------------------------
             // Load the minimization Library
             // ------------------------------------------------------------------------
-            // @source https://code.google.com/p/cssmin/
-            // @docs https://code.google.com/p/cssmin/wiki/WhatsNewVersion301?tm=6
-            // @version 3.0.1
+            // @version 1.0.0
             // @license MIT License (MIT)
-            // @description CssMin is a css parser and minfier. It minifies css by 
+            // @description CssMin is a css minfier. It minifies css by 
             //              removing unneeded whitespace character, comments, empty 
             //              blocks and empty declarations. In addition declaration 
-            //              values can get rewritten to shorter notation if available. 
-            //              The minification if configurable. CssMin has some benefits. 
-            //              It supports the rewrite of CSS Level 3 properties to their 
-            //              browser specific counterparts and is able to simulate CSS 
-            //              Variables.
+            //              values can get rewritten to shorter notation if available.
             //------------------------------------------------------------------------
-            require_once(wire('config')->paths->AllInOneMinify.'lib'.DIRECTORY_SEPARATOR.'CSSMin-v3.0.1.php');
+            require_once(wire('config')->paths->AllInOneMinify.'lib'.DIRECTORY_SEPARATOR.'CSSMin-v1.0.0.php');
 
             // ------------------------------------------------------------------------
             // Load the URL Rewriting Library
@@ -507,37 +501,12 @@ class AllInOneMinify extends WireData implements Module, ConfigurableModule {
             require_once(wire('config')->paths->AllInOneMinify.'lib'.DIRECTORY_SEPARATOR.'UriRewriter.php');
 
             // ------------------------------------------------------------------------
-            // Configure the plugins and filters for the CSS minimization.
-            // ------------------------------------------------------------------------
-            $css_filters    = array("ImportImports"                 => false,
-                                    "RemoveComments"                => true, 
-                                    "RemoveEmptyRulesets"           => true,
-                                    "RemoveEmptyAtBlocks"           => true,
-                                    "ConvertLevel3AtKeyframes"      => false,
-                                    "ConvertLevel3Properties"       => false,
-                                    "Variables"                     => false,
-                                    "RemoveLastDelarationSemiColon" => true);
-
-            $css_plugins    = array("Variables"                     => false,
-                                    "ConvertFontWeight"             => false,
-                                    "ConvertHslColors"              => false,
-                                    "ConvertRgbColors"              => false,
-                                    "ConvertNamedColors"            => false,
-                                    "CompressColorValues"           => false,
-                                    "CompressUnitValues"            => false,
-                                    "CompressExpressionValues"      => false);
-
-            $custom_search  = array(' !important', ' > ', ' + ', ', ');
-            $custom_replace = array('!important', '>', '+', ',');
-
-            // ------------------------------------------------------------------------
             // Load all content, minimize the contents, rewrite the URLs and paste 
             // everything in a Varibale together.
             // ------------------------------------------------------------------------
             foreach ($stylesheets as $stylesheet) {
                 $_css_src   = file_get_contents($stylesheet['absolute_path']).PHP_EOL;
                 $_css_src   = (!empty($_css_src) AND self::$developmentMode !== true) ? CssMin::minify($_css_src, $css_filters, $css_plugins) : $_css_src;
-                $_css_src   = (!empty($_css_src) AND self::$developmentMode !== true) ? str_replace($custom_search, $custom_replace, $_css_src) : $_css_src;
                 $_css_src   = (!empty($_css_src)) ? Minify_CSS_UriRewriter::rewrite($_css_src, dirname($stylesheet['absolute_path'])) : $_css_src;
                 $_css      .= $_css_src;
             }
