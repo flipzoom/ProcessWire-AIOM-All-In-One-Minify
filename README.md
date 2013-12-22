@@ -74,6 +74,7 @@ If you are currently in development of the site, caching can be a problem. For t
 2.1.1
 
 * Old code removed
+* Cleanup
 
 2.1.0
 
