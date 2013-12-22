@@ -71,6 +71,10 @@ If you are currently in development of the site, caching can be a problem. For t
 
 ##Changelog##
 
+2.1.1
+
+* Old code removed
+
 2.1.0
 
 * New CSS minimization library
