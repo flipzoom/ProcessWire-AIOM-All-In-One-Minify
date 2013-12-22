@@ -66,7 +66,7 @@ class AllInOneMinify extends WireData implements Module, ConfigurableModule {
             // ------------------------------------------------------------------------
             // Version: major, minor, revision, i.e. 100 = 1.1.0
             // ------------------------------------------------------------------------
-            'version' => 210, 
+            'version' => 211, 
 
             // ------------------------------------------------------------------------
             // Summary is brief description of what this module is
@@ -506,7 +506,7 @@ class AllInOneMinify extends WireData implements Module, ConfigurableModule {
             // ------------------------------------------------------------------------
             foreach ($stylesheets as $stylesheet) {
                 $_css_src   = file_get_contents($stylesheet['absolute_path']).PHP_EOL;
-                $_css_src   = (!empty($_css_src) AND self::$developmentMode !== true) ? CssMin::minify($_css_src, $css_filters, $css_plugins) : $_css_src;
+                $_css_src   = (!empty($_css_src) AND self::$developmentMode !== true) ? CssMin::minify($_css_src) : $_css_src;
                 $_css_src   = (!empty($_css_src)) ? Minify_CSS_UriRewriter::rewrite($_css_src, dirname($stylesheet['absolute_path'])) : $_css_src;
                 $_css      .= $_css_src;
             }
