@@ -66,7 +66,7 @@ class AllInOneMinify extends WireData implements Module, ConfigurableModule {
             // ------------------------------------------------------------------------
             // Version: major, minor, revision, i.e. 100 = 1.1.0
             // ------------------------------------------------------------------------
-            'version' => 211, 
+            'version' => 220, 
 
             // ------------------------------------------------------------------------
             // Summary is brief description of what this module is
@@ -399,14 +399,13 @@ class AllInOneMinify extends WireData implements Module, ConfigurableModule {
         // Check if there is already a combined and cached file. If not, 
         // generating a new minimized cache file.
         // ------------------------------------------------------------------------
-        if(!file_exists(wire('config')->paths->assets.self::$cacheDir.DIRECTORY_SEPARATOR.$cacheFile) OR self::$developmentMode === true) {
+        if(!file_exists(wire('config')->paths->assets.self::$cacheDir.DIRECTORY_SEPARATOR.$cacheFile) OR self::$developmentMode === true OR 1==1) {
 
             // ------------------------------------------------------------------------
             // Load the minimization Library
             // ------------------------------------------------------------------------
-            // @source https://github.com/rgrove/jsmin-php
-            // @docs https://github.com/rgrove/jsmin-php
-            // @version 1.1.2
+            // @source https://code.google.com/p/minify/source/browse/min/lib/JSMin.php?name=2.1.7
+            // @version 2.1.7
             // @license MIT License (MIT)
             // @description PHP implementation of Douglas Crockford's JSMin. This is 
             //              pretty much a direct port of jsmin.c to PHP with just a few 
@@ -414,7 +413,7 @@ class AllInOneMinify extends WireData implements Module, ConfigurableModule {
             //              from stdin and outputs to stdout, this library accepts a 
             //              string as input and returns another string as output.
             //------------------------------------------------------------------------
-            require_once(wire('config')->paths->AllInOneMinify.'lib'.DIRECTORY_SEPARATOR.'JSMin-v1.1.2.php');
+            require_once(wire('config')->paths->AllInOneMinify.'lib'.DIRECTORY_SEPARATOR.'JSMin-v2.1.7.php');
 
             // ------------------------------------------------------------------------
             // Load all content, minimize the contents and paste everything in a 
@@ -422,7 +421,7 @@ class AllInOneMinify extends WireData implements Module, ConfigurableModule {
             // ------------------------------------------------------------------------
             foreach ($javascripts as $javascript) {
                 $_js_src    = file_get_contents($javascript['absolute_path']).PHP_EOL;
-                $_js_src    = (!empty($_js_src) AND self::$developmentMode !== true) ? JSMin::minify($_js_src) : $_js_src;
+                $_js_src    = (!empty($_js_src) AND self::$developmentMode !== true AND !self::_isMinimzied($javascript['absolute_path'])) ? JSMin::minify($_js_src) : $_js_src;
                 $_js       .= $_js_src;
             }
 
@@ -478,14 +477,14 @@ class AllInOneMinify extends WireData implements Module, ConfigurableModule {
             // ------------------------------------------------------------------------
             // Load the minimization Library
             // ------------------------------------------------------------------------
-            // @version 1.0.0
+            // @version 1.1.0
             // @license MIT License (MIT)
             // @description CssMin is a css minfier. It minifies css by 
             //              removing unneeded whitespace character, comments, empty 
             //              blocks and empty declarations. In addition declaration 
             //              values can get rewritten to shorter notation if available.
             //------------------------------------------------------------------------
-            require_once(wire('config')->paths->AllInOneMinify.'lib'.DIRECTORY_SEPARATOR.'CSSMin-v1.0.0.php');
+            require_once(wire('config')->paths->AllInOneMinify.'lib'.DIRECTORY_SEPARATOR.'CSSMin-v1.1.0.php');
 
             // ------------------------------------------------------------------------
             // Load the URL Rewriting Library
@@ -506,7 +505,7 @@ class AllInOneMinify extends WireData implements Module, ConfigurableModule {
             // ------------------------------------------------------------------------
             foreach ($stylesheets as $stylesheet) {
                 $_css_src   = file_get_contents($stylesheet['absolute_path']).PHP_EOL;
-                $_css_src   = (!empty($_css_src) AND self::$developmentMode !== true) ? CssMin::minify($_css_src) : $_css_src;
+                $_css_src   = (!empty($_css_src) AND self::$developmentMode !== true AND !self::_isMinimzied($stylesheet['absolute_path'])) ? CssMin::minify($_css_src) : $_css_src;
                 $_css_src   = (!empty($_css_src)) ? Minify_CSS_UriRewriter::rewrite($_css_src, dirname($stylesheet['absolute_path'])) : $_css_src;
                 $_css      .= $_css_src;
             }
@@ -768,6 +767,17 @@ class AllInOneMinify extends WireData implements Module, ConfigurableModule {
         // Return valid URL or empty string
         // ------------------------------------------------------------------------
         return $_url;
+    }
+
+    /**
+     * ------------------------------------------------------------------------
+     * Checks if ".min" or "-min" at the end of the file name exists.
+     * ------------------------------------------------------------------------
+     * @param  string  $absolute_path Path with filename
+     * @return boolean
+     */
+    private function _isMinimzied($absolute_path) {
+        return (preg_match('/^([a-z0-9\-\_\.]*)(\.|\-)?min\.(js|css){1}$/i', strtolower(basename($absolute_path))) === 0) ? false : true; 
     }
 
     /**
