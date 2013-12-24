@@ -52,6 +52,10 @@ Minimize multiple files into one file.
 
 **Tip:** You can also use the short syntax **"AIOM"**. For example, ```AIOM::JS()```.
 
+##Already minimized files no longer minimized##
+
+To further enhance the performance and to give you maximum flexibility in the combining process, you now have the option to exclude certain files from the minimization (since version 2.2). All files that have the abbreviation ".min" or "-min" at the end of the file name and before the file extension, are no longer minimized. For example: ```file-1.js``` is minimized. ```file-1-min.js``` or ```file-1.min.js``` is not minimized. The same for CSS. ```file-1.css``` is minimized. ```file-1-min.css``` or ```file-1.min.css``` is not minimized.
+
 ##Exemplary template structure##
 
 ```/
@@ -70,6 +74,13 @@ The generated HTML source code is automatically minimized when rendering. This r
 If you are currently in development of the site, caching can be a problem. For this, you can enable the development mode since version 1.1.0 in the Backend (Module > AIOM > Config). The files will be combined, but not minimized and re-generated at each call. In addition, a no-cache GET parameter is appended with a timestamp to prevent the browser caching. For example: ```css_031ea978b0e6486c828ba444c6297ca5_dev.css?no-cache=1335939007```
 
 ##Changelog##
+
+2.2.0
+
+* New feature: File is not minimized when ".min" or "-min" is at the end of the filename. For example: ```file-1.min.js```.
+* Update CSSMin library to Version 1.1 (inspired by Yahoo! YUI compressor)
+* Update JSMin library to Version 2.7.1 (Security fix, recommended update)
+* Performance improvements on first minification
 
 2.1.1
 
