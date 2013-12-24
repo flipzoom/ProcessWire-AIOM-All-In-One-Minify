@@ -66,7 +66,7 @@ class AllInOneMinify extends WireData implements Module, ConfigurableModule {
             // ------------------------------------------------------------------------
             // Version: major, minor, revision, i.e. 100 = 1.1.0
             // ------------------------------------------------------------------------
-            'version' => 220, 
+            'version' => 221, 
 
             // ------------------------------------------------------------------------
             // Summary is brief description of what this module is
@@ -421,7 +421,7 @@ class AllInOneMinify extends WireData implements Module, ConfigurableModule {
             // ------------------------------------------------------------------------
             foreach ($javascripts as $javascript) {
                 $_js_src    = file_get_contents($javascript['absolute_path']).PHP_EOL;
-                $_js_src    = (!empty($_js_src) AND self::$developmentMode !== true AND !self::_isMinimzied($javascript['absolute_path'])) ? JSMin::minify($_js_src) : $_js_src;
+                $_js_src    = (!empty($_js_src) AND self::$developmentMode !== true AND !self::_isMinimized($javascript['absolute_path'])) ? JSMin::minify($_js_src) : $_js_src;
                 $_js       .= $_js_src;
             }
 
@@ -505,7 +505,7 @@ class AllInOneMinify extends WireData implements Module, ConfigurableModule {
             // ------------------------------------------------------------------------
             foreach ($stylesheets as $stylesheet) {
                 $_css_src   = file_get_contents($stylesheet['absolute_path']).PHP_EOL;
-                $_css_src   = (!empty($_css_src) AND self::$developmentMode !== true AND !self::_isMinimzied($stylesheet['absolute_path'])) ? CssMin::minify($_css_src) : $_css_src;
+                $_css_src   = (!empty($_css_src) AND self::$developmentMode !== true AND !self::_isMinimized($stylesheet['absolute_path'])) ? CssMin::minify($_css_src) : $_css_src;
                 $_css_src   = (!empty($_css_src)) ? Minify_CSS_UriRewriter::rewrite($_css_src, dirname($stylesheet['absolute_path'])) : $_css_src;
                 $_css      .= $_css_src;
             }
@@ -776,7 +776,7 @@ class AllInOneMinify extends WireData implements Module, ConfigurableModule {
      * @param  string  $absolute_path Path with filename
      * @return boolean
      */
-    private function _isMinimzied($absolute_path) {
+    private function _isMinimized($absolute_path) {
         return (preg_match('/^([a-z0-9\-\_\.]*)(\.|\-)?min\.(js|css){1}$/i', strtolower(basename($absolute_path))) === 0) ? false : true; 
     }
 
