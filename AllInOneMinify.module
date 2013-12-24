@@ -399,7 +399,7 @@ class AllInOneMinify extends WireData implements Module, ConfigurableModule {
         // Check if there is already a combined and cached file. If not, 
         // generating a new minimized cache file.
         // ------------------------------------------------------------------------
-        if(!file_exists(wire('config')->paths->assets.self::$cacheDir.DIRECTORY_SEPARATOR.$cacheFile) OR self::$developmentMode === true OR 1==1) {
+        if(!file_exists(wire('config')->paths->assets.self::$cacheDir.DIRECTORY_SEPARATOR.$cacheFile) OR self::$developmentMode === true) {
 
             // ------------------------------------------------------------------------
             // Load the minimization Library
