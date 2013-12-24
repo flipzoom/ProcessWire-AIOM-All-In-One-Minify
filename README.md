@@ -119,9 +119,9 @@ If you are currently in development of the site, caching can be a problem. For t
 1.0.0  
 * Initial release
 
-##Questions and comments?##
+##Questions or comments?##
 
-Send me an E-Mail with your questions, suggestions or bugs to support@flipzoom.de. 
+My Name is David Karich. Send me an E-Mail with your questions, suggestions or bugs to support@flipzoom.de. 
 
 ##Test environment##
 
@@ -129,13 +129,3 @@ Send me an E-Mail with your questions, suggestions or bugs to support@flipzoom.d
 * Windows (WAMP) / Linux (CentOS 6.4/6.5)
 * PHP 5.3.3, 5.5.3
 * Apache 2.2.21
-
-##To-do##
-
-* More .htaccess Improvement Tips
-* Inline minimizing for css and js in HTML source code
-
-- - - 
-
-__Best regards,__  
-Dave
