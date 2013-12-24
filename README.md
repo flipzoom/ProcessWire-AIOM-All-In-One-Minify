@@ -75,6 +75,10 @@ If you are currently in development of the site, caching can be a problem. For t
 
 ##Changelog##
 
+2.2.1
+
+* Code Corrections / class name
+
 2.2.0
 
 * New feature: File is not minimized when ".min" or "-min" is at the end of the filename. For example: ```file-1.min.js```.
