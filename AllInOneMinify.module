@@ -555,7 +555,7 @@ class AllInOneMinify extends WireData implements Module, ConfigurableModule {
         // ------------------------------------------------------------------------
         // Check if cache folder exist.
         // ------------------------------------------------------------------------
-        $_this = new self;
+        $_this = new self();
         $_this->___install();
         
         // ------------------------------------------------------------------------
