@@ -75,6 +75,11 @@ If you are currently in development of the site, caching can be a problem. For t
 
 ##Changelog##
 
+2.2.2 
+
+* BugFix ([#8](https://github.com/FlipZoomMedia/ProcessWire-AIOM-All-In-One-Minify/issues/8)): Many errors if debug mode is activated (Thanks to JoZ3)
+* Better error handling
+
 2.2.1
 
 * Code Corrections / class name
