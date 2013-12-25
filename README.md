@@ -81,6 +81,7 @@ If you are currently in development of the site, caching can be a problem. For t
 
 * BugFix ([#8](https://github.com/FlipZoomMedia/ProcessWire-AIOM-All-In-One-Minify/issues/8)): Many errors if debug mode is activated (Thanks to JoZ3)
 * Better error handling
+* Additional information about spaces in the HTML minimization. See ([#6](https://github.com/FlipZoomMedia/ProcessWire-AIOM-All-In-One-Minify/issues/6)) (Thanks to philippreiner)
 
 2.2.1
 
