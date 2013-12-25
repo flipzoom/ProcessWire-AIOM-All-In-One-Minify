@@ -52,7 +52,7 @@ class CssMin {
      * @param  string $css     The CSS code is to be minimized.
      * @return string          The minimized CSS code.
      */
-    public function minify($css) {
+    public static function minify($css) {
 
         // ------------------------------------------------------------------------
         // Let's divide css code in chunks of 5.000 chars aprox.
@@ -146,7 +146,7 @@ class CssMin {
      * @param  string $_source The CSS code is to be minimized.
      * @return string          The minimized CSS code.
      */
-    protected function _minify($_source) {
+    protected static function _minify($_source) {
 
         // ------------------------------------------------------------------------
         // Shorten hex ​​values​​. For example, #ff0000 to #f00.
@@ -286,7 +286,7 @@ class CssMin {
      * @param  array  $matches Regex-Result-Array
      * @return string          Restored string
      */
-    protected function replace_keyframe_zero($matches) {
+    protected static function replace_keyframe_zero($matches) {
         return $matches[1].preg_replace('/0\s*,/', '0%,', preg_replace('/\s*0\s*\{/', '0%{', $matches[2]));
     }
 
@@ -297,7 +297,7 @@ class CssMin {
      * @param  array  $matches Regex-Result-Array
      * @return string          Converted string
      */
-    protected function lowercase_properties($matches) {
+    protected static function lowercase_properties($matches) {
         return $matches[1].strtolower($matches[2]).$matches[3];
     }
 
@@ -312,7 +312,7 @@ class CssMin {
      * @param  int|bool $end index (optional)
      * @return string
      */
-    protected function str_slice($str, $start = 0, $end = false) {
+    protected static function str_slice($str, $start = 0, $end = false) {
         
         if ($end !== false && ($start < 0 || $end <= 0)) {
             
@@ -349,7 +349,7 @@ class CssMin {
      * @param  int    $offset index (optional)
      * @return int
      */
-    protected function index_of($haystack, $needle, $offset = 0) {
+    protected static function index_of($haystack, $needle, $offset = 0) {
         $index = strpos($haystack, $needle, $offset);
         return ($index !== false) ? $index : -1;
     }

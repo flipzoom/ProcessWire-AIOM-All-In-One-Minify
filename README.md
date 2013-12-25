@@ -69,11 +69,19 @@ site/
 
 The generated HTML source code is automatically minimized when rendering. This requires no change to the templates. Conditional Comments, textareas, code tags, etc. are excluded from the minimization.
 
+**NOTE**: AIOM removes all whitespaces between two tags. If you explicitly need a whitespace, change the whitespace into an HTML entity: ```&nbsp;```. See ([#6](https://github.com/FlipZoomMedia/ProcessWire-AIOM-All-In-One-Minify/issues/6))
+
 ##Development mode##
 
 If you are currently in development of the site, caching can be a problem. For this, you can enable the development mode since version 1.1.0 in the Backend (Module > AIOM > Config). The files will be combined, but not minimized and re-generated at each call. In addition, a no-cache GET parameter is appended with a timestamp to prevent the browser caching. For example: ```css_031ea978b0e6486c828ba444c6297ca5_dev.css?no-cache=1335939007```
 
 ##Changelog##
+
+2.2.2 
+
+* BugFix ([#8](https://github.com/FlipZoomMedia/ProcessWire-AIOM-All-In-One-Minify/issues/8)): Many errors if debug mode is activated (Thanks to JoZ3)
+* Better error handling
+* Additional information about spaces in the HTML minimization. See ([#6](https://github.com/FlipZoomMedia/ProcessWire-AIOM-All-In-One-Minify/issues/6)) (Thanks to philippreiner)
 
 2.2.1
 
