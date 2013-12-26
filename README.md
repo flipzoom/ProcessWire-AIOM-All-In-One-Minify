@@ -14,6 +14,7 @@ AIOM (All In One Minify) is a module to easily improve the performance of the we
 * All parameters can be adjusted via the backend.
 * During development, you can enable developer mode. Files are combined, but not minimized and browser caching is prevented.
 * You can use the short syntax or use the full class name in your templates.
+* The generated files can be delivered via a subdomain (Domain sharding / Cookieless domain)
 
 ##Installation##
 
