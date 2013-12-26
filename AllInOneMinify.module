@@ -435,7 +435,7 @@ class AllInOneMinify extends WireData implements Module, ConfigurableModule {
             // ------------------------------------------------------------------------
             if (file_put_contents(wire('config')->paths->assets.self::$cacheDir.DIRECTORY_SEPARATOR.$cacheFile, self::_generatorInformation($_js), LOCK_EX) !== false) {
                 if(chmod(wire('config')->paths->assets.self::$cacheDir.DIRECTORY_SEPARATOR.$cacheFile, octdec(wire('config')->chmodFile)) === false) {
-                    throw new WireException('The rights (chmod) for the combined js file could not be set. Verify that the rights in the ProcessWire Configuration are sufficient ($config->chmodFile).');
+                    throw new WireException('The permissions (chmod) for the combined js file could not be set. Verify that the permissions in the ProcessWire Configuration are sufficient ($config->chmodFile).');
                 }
             } else {
                 throw new WireException('The combined js file can not be written. Check if the script has sufficient permissions.');
@@ -529,7 +529,7 @@ class AllInOneMinify extends WireData implements Module, ConfigurableModule {
             // ------------------------------------------------------------------------
             if (file_put_contents(wire('config')->paths->assets.self::$cacheDir.DIRECTORY_SEPARATOR.$cacheFile, self::_generatorInformation($_css), LOCK_EX) !== false) {
                 if(chmod(wire('config')->paths->assets.self::$cacheDir.DIRECTORY_SEPARATOR.$cacheFile, octdec(wire('config')->chmodFile)) === false) {
-                    throw new WireException('The rights (chmod) for the combined CSS file could not be set. Verify that the rights in the ProcessWire Configuration are sufficient ($config->chmodFile).');
+                    throw new WireException('The permissions (chmod) for the combined CSS file could not be set. Verify that the permissions in the ProcessWire Configuration are sufficient ($config->chmodFile).');
                 }
             } else {
                 throw new WireException('The combined CSS file can not be written. Check if the script has sufficient permissions.');
@@ -567,10 +567,15 @@ class AllInOneMinify extends WireData implements Module, ConfigurableModule {
         // Remove all files that are older than the maximum lifetime.
         // ------------------------------------------------------------------------
         foreach ($_cacheFiles as $_cacheFile) {
-            if((filemtime(wire('config')->paths->assets.self::$cacheDir.DIRECTORY_SEPARATOR.$_cacheFile->getFilename()) + (int) self::$cacheMaxLifetime) < time() OR $force_all === true) {
+            if (((filemtime(wire('config')->paths->assets.self::$cacheDir.DIRECTORY_SEPARATOR.$_cacheFile->getFilename()) + self::$cacheMaxLifetime) < time() OR $force_all === true) AND is_file($_cacheFile)) {
                 $_file  = wire('config')->paths->assets.self::$cacheDir.DIRECTORY_SEPARATOR.$_cacheFile->getFilename();
-                chmod($_file, 0777);
-                unlink($_file);
+                if(chmod($_file, 0777) !== false) {
+                    if(unlink($_file) === false) {
+                        throw new WireException('The old cache files could not be deleted.');
+                    }
+                } else {
+                    throw new WireException('The permissions (chmod) to delete old cache files could not be changed.');
+                }
             }
         }
     }
@@ -626,6 +631,11 @@ class AllInOneMinify extends WireData implements Module, ConfigurableModule {
      *                      timestamps of the files.
      */
     private static function _fileArray($files, $ext = '.css') {
+
+        // ------------------------------------------------------------------------
+        // Initialize files array.
+        // ------------------------------------------------------------------------
+        $_files = array();
 
         // ------------------------------------------------------------------------
         // Check each file on existence and remove paths to prevent from 
