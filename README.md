@@ -9,11 +9,11 @@ AIOM (All In One Minify) is a module to easily improve the performance of the we
 
 ####Information####
 
-* All paths are relative to the template folder. URLs will be automatically corrected. Nothing needs to be changed.
+* All paths are relative to the template folder. URLs in css files will be automatically corrected. Nothing needs to be changed.
 * If you make changes to the source stylesheet and javascript files, a new combined version is created automatically.
 * All parameters can be adjusted via the backend.
 * During development, you can enable developer mode. Files are combined, but not minimized and browser caching is prevented.
-* You can use the short syntax or use the full class name.
+* You can use the short syntax or use the full class name in your templates.
 
 ##Installation##
 
