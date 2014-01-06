@@ -142,3 +142,5 @@ My Name is David Karich. Send me an E-Mail with your questions, suggestions or b
 * Windows (WAMP) / Linux (CentOS 6.4/6.5)
 * PHP 5.3.3, 5.5.3
 * Apache 2.2.21
+
+[![Analytics](https://ga-beacon.appspot.com/UA-7951064-10/ProcessWire-AIOM-All-In-One-Minify/blob/master/README.md?pixel)](https://github.com/igrigorik/ga-beacon)
