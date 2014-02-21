@@ -9758,5 +9758,3 @@ class Less_SourceMap_Generator extends Less_Configurable {
     }
 
 } 
-
-?>
