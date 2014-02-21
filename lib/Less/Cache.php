@@ -191,6 +191,4 @@ class Less_Cache{
         $clean = true;
     }
 
-}
-
-?>
+} 
