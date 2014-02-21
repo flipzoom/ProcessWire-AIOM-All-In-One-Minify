@@ -1,41 +1,78 @@
-#ProcessWire – AIOM (All In One Minify)#
+#ProcessWire – AIOM+ (All In One Minify)#
 
-####Simple minify for CSS, JS and HTML####
+####Simple minify and parsing for CSS, LESS, JS and HTML####
 -----------------------------
 
-AIOM (All In One Minify) is a module to easily improve the performance of the website. By a simple function call Stylesheets and Javascript files can be minimized and combined into one file. This reduces the requests and minimizes the traffic. In addition, the generated HTML source code is minimized.
+AIOM+ (All In One Minify) is a module to easily improve the performance of your website. By a simple function call Stylesheets, LESS  and Javascript files can be parsed, minimized and combined into one single file. This reduces the server requests, loading time and minimizes the traffic. In addition, the generated HTML source code can be minimized and all generated files can be loaded over a cookieless domain (domain sharding).
 
 - - - 
 
 ####Information####
 
 * All paths are relative to the template folder. URLs in css files will be automatically corrected. Nothing needs to be changed.
-* If you make changes to the source stylesheet and javascript files, a new combined version is created automatically.
+* If you make changes to the source stylesheet, LESS or javascript files, a new parsed and combined version is created automatically.
 * All parameters can be adjusted via the backend.
-* During development, you can enable developer mode. Files are combined, but not minimized and browser caching is prevented.
-* You can use the short syntax or use the full class name in your templates.
+* During development, you can enable developer mode. Files are parsed and combined, but not minimized and browser caching is prevented.
+* You can use the short syntax ```AIOM``` or use the full class name ```AllInOneMinify``` in your templates.
 * The generated files can be delivered via a subdomain (Domain sharding / Cookieless domain)
+* **NEW FEATURE**: LESS files can directly server side generated on the fly, without plugins. AIOM+ has a complete, high-performance PHP ported LESS library of the official LESS processor included! 
+* **NOTE**: There are a few unsupported LESS features: 
+    * Evaluation of JavaScript expressions within back-ticks (for obvious reasons)
+    * Definition of custom functions
 
 ##Installation##
 
 1. Copy the files for this module to /site/modules/AllInOneMinify/
-2. In admin: Modules > Check for new modules. Install Module > AIOM (All In One Minify) for CSS, JS and HTML.
+2. In admin: Modules > Check for new modules. Install Module > AIOM+ (All In One Minify) for CSS, LESS, JS and HTML.
 
-##Minimize Stylesheets##
+##Minimize Stylesheets and parse LESS files##
 
 Minimization of a single file.
 
 ```html+php
+<!-- CSS Stylesheet -->
 <link rel="stylesheet" type="text/css" href="<?php echo AllInOneMinify::CSS('css/stylesheet.css'); ?>">
+
+<!-- LESS file -->
+<link rel="stylesheet" type="text/css" href="<?php echo AllInOneMinify::CSS('css/stylesheet.less'); ?>">
 ```
 
-Minimize multiple files into one file.
+Minimize multiple files into one file. You can even mix stylesheet and LESS files in parsing and combining process!
 
 ```html+php
-<link rel="stylesheet" href="<?php echo AllInOneMinify::CSS(array('css/file-1.css', 'css/file-2.css', 'css/file-3.css', 'css/file-4.css')); ?>">
+<link rel="stylesheet" href="<?php echo AllInOneMinify::CSS(array('css/file-1.css', 'css/file-2.less', 'css/file-3.css', 'css/file-4.less')); ?>">
 ```
 
 **Tip:** You can also use the short syntax **"AIOM"**. For example, ```AIOM::CSS()```.
+
+##LESS variables access in multiple files##
+
+You have a LESS file in which you are defining, for example, all colors and another LESS file that defines the actual layout? Now you need in the layout LESS file access to the variables of the color LESS file? It's easier than you think. Through a simple referencing of source LESS file. For example: 
+
+```html+php
+<link rel="stylesheet" type="text/css" href="<?php echo AllInOneMinify::CSS('css/color.less'); ?>">
+...
+<link rel="stylesheet" type="text/css" href="<?php echo AllInOneMinify::CSS('css/layout.less'); ?>">
+```
+
+Example content of ```color.less```
+
+```css
+@my-color: #ff0000;
+```
+
+Example content of ```layout.less```
+
+```css
+@import (reference) "css/color.less";
+
+body {
+    background-color: @my-color;
+}
+```
+
+That's all. Pretty, hu? The full documentation of LESS you can find at: www.lesscss.org
+
 
 ##Minimize Javascripts##
 
@@ -77,6 +114,13 @@ The generated HTML source code is automatically minimized when rendering. This r
 If you are currently in development of the site, caching can be a problem. For this, you can enable the development mode since version 1.1.0 in the Backend (Module > AIOM > Config). The files will be combined, but not minimized and re-generated at each call. In addition, a no-cache GET parameter is appended with a timestamp to prevent the browser caching. For example: ```css_031ea978b0e6486c828ba444c6297ca5_dev.css?no-cache=1335939007```
 
 ##Changelog##
+
+3.0.0 
+
+* AIOM+ tested with ProcessWire 2.4
+* Module now multilingual
+* New feature: LESS support (direct parsing and minimization server side on the fly)
+* Update readme / documentation
 
 2.2.2 
 
@@ -138,7 +182,7 @@ My Name is David Karich. Send me an E-Mail with your questions, suggestions or b
 
 ##Test environment##
 
-* ProcessWire in Version 2.3
+* ProcessWire in Version 2.3 and 2.4
 * Windows (WAMP) / Linux (CentOS 6.4/6.5)
 * PHP 5.3.3, 5.5.3
 * Apache 2.2.21
