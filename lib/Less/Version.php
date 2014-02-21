@@ -12,6 +12,4 @@ class Less_Version{
     const less_version = '1.6.3';       // The less.js version that this build should be compatible with
     const cache_version = '163';        // The parser cache version
 
-}
-
-?>
+} 
