@@ -1,9 +1,9 @@
-#ProcessWire – AIOM+ (All In One Minify)#
+#AIOM+ (All In One Minify)#
 
 ####Simple minify and parsing for CSS, LESS, JS and HTML####
 -----------------------------
 
-AIOM+ (All In One Minify) is a module to easily improve the performance of your website. By a simple function call Stylesheets, LESS  and Javascript files can be parsed, minimized and combined into one single file. This reduces the server requests, loading time and minimizes the traffic. In addition, the generated HTML source code can be minimized and all generated files can be loaded over a cookieless domain (domain sharding).
+AIOM+ (All In One Minify) is a ProcessWire module to easily improve the performance of your website. By a simple function call Stylesheets, LESS  and Javascript files can be parsed, minimized and combined into one single file. This reduces the server requests, loading time and minimizes the traffic. In addition, the generated HTML source code can be minimized and all generated files can be loaded over a cookieless domain (domain sharding).
 
 - - - 
 
@@ -186,5 +186,9 @@ My Name is David Karich. Send me an E-Mail with your questions, suggestions or b
 * Windows (WAMP) / Linux (CentOS 6.4/6.5)
 * PHP 5.3.3, 5.5.3
 * Apache 2.2.21
+
+##Old stable Version needed?##
+
+Under the following link you can find the old stable version of AIOM without LESS support: https://github.com/FlipZoomMedia/ProcessWire-AIOM-All-In-One-Minify/tree/AIOM-(old-Stable-2.2.2)
 
 [![Analytics](https://ga-beacon.appspot.com/UA-7951064-10/ProcessWire-AIOM-All-In-One-Minify/blob/master/README.md?pixel)](https://github.com/igrigorik/ga-beacon)
