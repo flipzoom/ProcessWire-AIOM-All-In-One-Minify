@@ -115,6 +115,10 @@ If you are currently in development of the site, caching can be a problem. For t
 
 ##Changelog##
 
+3.0.1
+
+* BugFix ([#11](https://github.com/FlipZoomMedia/ProcessWire-AIOM-All-In-One-Minify/issues/11)): Wrong class order in Less.php parser (Thanks to Ryan Pierce)
+
 3.0.0 
 
 * AIOM+ tested with ProcessWire 2.4
