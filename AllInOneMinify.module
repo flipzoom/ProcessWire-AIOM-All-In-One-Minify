@@ -522,7 +522,7 @@ class AllInOneMinify extends WireData implements Module, ConfigurableModule {
             // ------------------------------------------------------------------------
             // @source http://lessphp.gpeasy.com/
             // @docs http://lessphp.gpeasy.com/
-            // @version 1.6.3
+            // @version 1.6.3.1
             // @license Apache License 2.0
             // @description This is a PHP port of the official LESS processor. The code 
             //              structure of less.php mirrors that of the official processor 
