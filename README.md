@@ -23,7 +23,14 @@ AIOM+ (All In One Minify) is a ProcessWire module to easily improve the performa
 ##Installation##
 
 1. Copy the files for this module to /site/modules/AllInOneMinify/
-2. In admin: Modules > Check for new modules. Install Module > AIOM+ (All In One Minify) for CSS, LESS, JS and HTML.
+2. In admin: Modules > Check for new modules. 
+3. Install Module "AIOM+ (All In One Minify) for CSS, LESS, JS and HTML".
+
+**Alternative in ProcessWire 2.4**  
+
+1. Login to PW backend and go to Modules
+2. Click tab "new" and enter Module Class Name: "AllInOneMinify"
+3. Click "Download and Install"
 
 ##Minimize Stylesheets and parse LESS files##
 
