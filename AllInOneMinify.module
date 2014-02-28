@@ -66,7 +66,7 @@ class AllInOneMinify extends WireData implements Module, ConfigurableModule {
             // ------------------------------------------------------------------------
             // Version: major, minor, revision, i.e. 100 = 1.1.0
             // ------------------------------------------------------------------------
-            'version' => 301, 
+            'version' => 311, 
 
             // ------------------------------------------------------------------------
             // Summary is brief description of what this module is
@@ -676,47 +676,86 @@ class AllInOneMinify extends WireData implements Module, ConfigurableModule {
      * Check if a file exists. If so, write the absolute path and the time 
      * stamp of the last modification to an array.
      * ------------------------------------------------------------------------
-     * @param  array $files An array of paths to the files.
-     * @return array        An array of absolute paths and modification 
-     *                      timestamps of the files.
+     * @param  array $asset_files   An array of paths to the files.
+     * @return array                An array of absolute paths and modification 
+     *                              timestamps of the files.
      */
-    private static function _fileArray($files, $ext = '.css') {
+    private static function _fileArray($asset_files, $extension = '.css') {
 
         // ------------------------------------------------------------------------
-        // Initialize allowed extension array
+        // Initialize allowed extension array, current page id and files array.
         // ------------------------------------------------------------------------
-        $ext    = is_array($ext) ? $ext : array($ext);
-
-        // ------------------------------------------------------------------------
-        // Initialize files array.
-        // ------------------------------------------------------------------------
-        $_files = array();
+        $extension          = is_array($extension) ? $extension : array($extension);
+        $current_page_id    = wire('page')->id;
+        $_asset_files       = array();
 
         // ------------------------------------------------------------------------
         // Check each file on existence and remove paths to prevent from 
         // Directory traversal attacks.
         // ------------------------------------------------------------------------
-        foreach ($files as $file) {
-            
+        foreach ($asset_files as $_asset_file) {
+
             // ------------------------------------------------------------------------
-            // Filter Directory Traversal
+            // Conditional loading
             // ------------------------------------------------------------------------
-            $_path  = str_ireplace(array('../', './', '%2e%2e%2f', '..%2F'), '', (wire('config')->paths->templates.$file));
-            
+            if(is_array($_asset_file) AND isset($_asset_file['loadOn']) AND isset($_asset_file['files'])) {
+
+                // ------------------------------------------------------------------------
+                // Find all page ids based on the passed selector.
+                // ------------------------------------------------------------------------
+                $conditional_pages = wire('pages')->find($_asset_file['loadOn'])->explode('id');
+                
+                // ------------------------------------------------------------------------
+                // Check if current page matched the conditional page id.
+                // ------------------------------------------------------------------------
+                if(in_array($current_page_id, $conditional_pages)) {
+                    if(is_array($_asset_file['files'])) {
+                        foreach ($_asset_file['files'] as $__asset_file) {
+                            array_push($_asset_files, self::_getFileInfoArray($__asset_file, $extension));
+                        }
+
+                    } else {
+                        array_push($_asset_files, self::_getFileInfoArray($_asset_file['files'], $extension));
+                    }
+                }
+
             // ------------------------------------------------------------------------
-            // Check existence and whether there is no external source.
+            // No condition, always load.
             // ------------------------------------------------------------------------
-            if(file_exists($_path) AND !stristr($_path, '//') AND self::_stristr_array_needle($_path, $ext)) {
-                $_files[]   = array('absolute_path'     => $_path, 
-                                    'last_modified'     => filemtime($_path), 
-                                    'file_extension'    => pathinfo($_path, PATHINFO_EXTENSION));
+            } else {
+                array_push($_asset_files, self::_getFileInfoArray($_asset_file, $extension));
             }
         }
 
         // ------------------------------------------------------------------------
         // Return array with all valid file paths and timestamps.
         // ------------------------------------------------------------------------
-        return $_files;
+        return $_asset_files;
+    }
+
+    /**
+     * ------------------------------------------------------------------------
+     * Create an array with absolute path, last modify date and file extension.
+     * ------------------------------------------------------------------------
+     * @param  string $_file        Asset file
+     * @param  array  $extension    Allowed file extensions
+     * @return array
+     */
+    private static function _getFileInfoArray($_file, $extension) {
+
+        // ------------------------------------------------------------------------
+        // Filter Directory Traversal
+        // ------------------------------------------------------------------------
+        $_path  = str_ireplace(array('../', './', '%2e%2e%2f', '..%2F'), '', (wire('config')->paths->templates.$_file));
+        
+        // ------------------------------------------------------------------------
+        // Check existence and whether there is no external source.
+        // ------------------------------------------------------------------------
+        if(file_exists($_path) AND !stristr($_path, '//') AND self::_stristr_array_needle($_path, $extension)) {
+            return array('absolute_path'    => $_path, 
+                         'last_modified'    => filemtime($_path), 
+                         'file_extension'   => pathinfo($_path, PATHINFO_EXTENSION));
+        }
     }
 
     /**
