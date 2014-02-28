@@ -19,6 +19,21 @@ AIOM+ (All In One Minify) is a ProcessWire module to easily improve the performa
 * **NOTE**: There are a few unsupported LESS features: 
     * Evaluation of JavaScript expressions within back-ticks (for obvious reasons)
     * Definition of custom functions
+* **NEW FEATURE**: Conditional loading of files based on a API selector
+
+##Table of content##
+
+* [Installation](#installation)
+* [Minimize Stylesheets and parse LESS files](#minimize-stylesheets-and-parse-less-files)
+* [LESS variables access in multiple files](#less-variables-access-in-multiple-files)
+* [Minimize Javascripts](#minimize-javascripts)
+* [Conditional loading](#conditional-loading)
+* [Exclude minimized files](#already-minimized-files-no-longer-minimized)
+* [Exemplary template structure](#exemplary-template-structure)
+* [Minimize HTML](#minimize-html)
+* [Development mode](#development-mode)
+* [Changelog](#changelog)
+* [Others](#questions-or-comments)
 
 ##Installation##
 
@@ -97,6 +112,27 @@ Minimize multiple files into one file.
 
 **Tip:** You can also use the short syntax **"AIOM"**. For example, ```AIOM::JS()```.
 
+##Conditional loading##
+
+Since AIOM+ version 3.1.1 javascripts, stylesheets and LESS files can be loaded based on a API selector. Here is an example of conditional loading: 
+
+```html+php
+<?php 
+
+$stylesheets 	= array('css/reset.css',
+                        'css/main.less',
+						array('loadOn' 	=> 'id|template=1002|1004|sitemap', 
+							  'files'	=> array('css/special.css', 'css/special-theme.less')
+							  )
+						); 
+						
+?>
+
+<link rel="stylesheet" type="text/css" href="<?php echo AllInOneMinify::CSS($stylesheets); ?>" />
+```
+
+The same you can do with ```AIOM::JS()```. ```loadOn```must be an [ProcessWire API selector](http://processwire.com/api/selectors/).
+
 ##Already minimized files no longer minimized##
 
 To further enhance the performance and to give you maximum flexibility in the combining process, you now have the option to exclude certain files from the minimization (since version 2.2). All files that have the abbreviation ".min" or "-min" at the end of the file name and before the file extension, are no longer minimized. For example: ```file-1.js``` is minimized. ```file-1-min.js``` or ```file-1.min.js``` is not minimized. The same for CSS. ```file-1.css``` is minimized. ```file-1-min.css``` or ```file-1.min.css``` is not minimized.
@@ -114,13 +150,18 @@ site/
 
 The generated HTML source code is automatically minimized when rendering. This requires no change to the templates. Conditional Comments, textareas, code tags, etc. are excluded from the minimization.
 
-**NOTE**: AIOM removes all whitespaces between two tags. If you explicitly need a whitespace, change the whitespace into an HTML entity: ```&nbsp;```. See ([#6](https://github.com/FlipZoomMedia/ProcessWire-AIOM-All-In-One-Minify/issues/6))
+**NOTE**: AIOM+ removes all whitespaces between two tags. If you explicitly need a whitespace, change the whitespace into an HTML entity: ```&nbsp;```. See ([#6](https://github.com/FlipZoomMedia/ProcessWire-AIOM-All-In-One-Minify/issues/6))
 
 ##Development mode##
 
 If you are currently in development of the site, caching can be a problem. For this, you can enable the development mode since version 1.1.0 in the Backend (Module > AIOM > Config). The files will be combined, but not minimized and re-generated at each call. In addition, a no-cache GET parameter is appended with a timestamp to prevent the browser caching. For example: ```css_031ea978b0e6486c828ba444c6297ca5_dev.css?no-cache=1335939007```
 
 ##Changelog##
+
+3.1.1
+
+* New feature: Conditional loading
+* Update readme / documentation
 
 3.0.1
 
