@@ -117,17 +117,11 @@ Minimize multiple files into one file.
 Since AIOM+ version 3.1.1 javascripts, stylesheets and LESS files can be loaded based on a API selector. Here is an example of conditional loading: 
 
 ```html+php
-<?php 
-
-$stylesheets 	= array('css/reset.css',
-                        'css/main.less',
-						array('loadOn' 	=> 'id|template=1002|1004|sitemap', 
-							  'files'	=> array('css/special.css', 'css/special-theme.less')
-							  )
-						); 
-						
-?>
-
+<?php $stylesheets  = array('css/reset.css',
+                            'css/main.less',
+					        array('loadOn'  => 'id|template=1002|1004|sitemap', 
+						          'files'   => array('css/special.css', 'css/special-theme.less'))); ?>
+						          
 <link rel="stylesheet" type="text/css" href="<?php echo AllInOneMinify::CSS($stylesheets); ?>" />
 ```
 
