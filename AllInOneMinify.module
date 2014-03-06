@@ -42,6 +42,7 @@ class AllInOneMinify extends WireData implements Module, ConfigurableModule {
     private static $jsCachePrefix;
     private static $enableHTMLMinify;
     private static $developmentMode;
+    private static $directoryTraversal;
     private static $domainSharding;
     private static $domainShardingSSL;
     private static $templateUseSSL;
@@ -66,7 +67,7 @@ class AllInOneMinify extends WireData implements Module, ConfigurableModule {
             // ------------------------------------------------------------------------
             // Version: major, minor, revision, i.e. 100 = 1.1.0
             // ------------------------------------------------------------------------
-            'version' => 311, 
+            'version' => 312, 
 
             // ------------------------------------------------------------------------
             // Summary is brief description of what this module is
@@ -146,7 +147,7 @@ class AllInOneMinify extends WireData implements Module, ConfigurableModule {
         $field              = wire('modules')->get('InputfieldCheckbox');
         $field->name        = 'html_minify';
         $field->label       = __('HTML minify');
-        $field->columnWidth = 33;
+        $field->columnWidth = 25;
         $field->value       = (isset($data['html_minify'])) ? $data['html_minify'] : 1;
         $field->checked     = ($field->value == 1) ? 'checked' : '';
         $field->description = __('In order to remove unnecessary whitespace and comments from the HTML source code, enable this option.');
@@ -158,10 +159,22 @@ class AllInOneMinify extends WireData implements Module, ConfigurableModule {
         $field              = wire('modules')->get('InputfieldCheckbox');
         $field->name        = 'development_mode';
         $field->label       = __('Development mode');
-        $field->columnWidth = 34;
+        $field->columnWidth = 25;
         $field->value       = (isset($data['development_mode'])) ? $data['development_mode'] : 0;
         $field->checked     = ($field->value == 1) ? 'checked' : '';
         $field->description = __('Enable development mode to prevent caching by the browser and not to minimize the files.');
+        $fields->add($field); 
+
+        // ------------------------------------------------------------------------
+        // Define checkbox field to enable or disable the directory traversal option.
+        // ------------------------------------------------------------------------
+        $field              = wire('modules')->get('InputfieldCheckbox');
+        $field->name        = 'directory_traversal';
+        $field->label       = __('Allow Directory Traversal');
+        $field->columnWidth = 25;
+        $field->value       = (isset($data['directory_traversal'])) ? $data['directory_traversal'] : 0;
+        $field->checked     = ($field->value == 1) ? 'checked' : '';
+        $field->description = __('Enable the directory traversal option to make it possible to add files from outside of the template folders. (../)');
         $fields->add($field); 
 
         // ------------------------------------------------------------------------
@@ -169,9 +182,9 @@ class AllInOneMinify extends WireData implements Module, ConfigurableModule {
         // ------------------------------------------------------------------------
         $_cacheInfo         = self::_getNumberOfCacheFiles();
         $field              = wire('modules')->get('InputfieldMarkup');
-        $field->columnWidth = 33;
+        $field->columnWidth = 25;
         $field->label       = __('Cache control');
-        $field->description = __('Here you can delete all files generated so far.').'<br /><br />';
+        $field->description = __('Here you can delete all cached files.').'<br /><br />';
         $field->description.= sprintf(__('Cached files: %s | Used space: %s'), $_cacheInfo['numberOfFiles'], $_cacheInfo['bytesTotal']);
         
             // ------------------------------------------------------------------------
@@ -214,7 +227,7 @@ class AllInOneMinify extends WireData implements Module, ConfigurableModule {
         // ------------------------------------------------------------------------
         $field              = wire('modules')->get('InputfieldMarkup');
         $field->columnWidth = 50;
-        $field->label       = __('How to use AIOM');
+        $field->label       = __('How to use AIOM+');
         $field->description = sprintf(__('Quick introduction to the module and how you use it. Full documentation under: %s'), 'https://github.com/FlipZoomMedia/ProcessWire-AIOM-All-In-One-Minify');
         $field->markupText  = file_get_contents(wire('config')->paths->AllInOneMinify.'doc'.DIRECTORY_SEPARATOR.'how-to-use.html');
         $fields->add($field);
@@ -322,6 +335,11 @@ class AllInOneMinify extends WireData implements Module, ConfigurableModule {
         $this->development_mode     = 0;
 
         // ------------------------------------------------------------------------
+        // Enable or disable directory traversal option
+        // ------------------------------------------------------------------------
+        $this->directory_traversal  = 0;
+
+        // ------------------------------------------------------------------------
         // Cookie-less domain for parallel Asset downloads. Must point to web root.
         // Use a CNAME DNS record. If empty, the default URL will be used. 
         // Format: http(s)://static.mydomain.com (without a concluding Slash)
@@ -354,6 +372,7 @@ class AllInOneMinify extends WireData implements Module, ConfigurableModule {
         self::$cacheMaxLifetime     = self::_sanitizeNumericCacheTime($this->max_cache_lifetime);
         self::$enableHTMLMinify     = ($this->html_minify == 1) ? true : false;
         self::$developmentMode      = ($this->development_mode == 1) ? true : false;
+        self::$directoryTraversal   = ($this->directory_traversal == 1) ? true : false;
         self::$domainSharding       = self::_validateURL($this->domain_sharding);
         self::$domainShardingSSL    = self::_validateURL($this->domain_sharding_ssl);
 
@@ -522,7 +541,7 @@ class AllInOneMinify extends WireData implements Module, ConfigurableModule {
             // ------------------------------------------------------------------------
             // @source http://lessphp.gpeasy.com/
             // @docs http://lessphp.gpeasy.com/
-            // @version 1.6.3.1
+            // @version 1.7
             // @license Apache License 2.0
             // @description This is a PHP port of the official LESS processor. The code 
             //              structure of less.php mirrors that of the official processor 
@@ -744,9 +763,9 @@ class AllInOneMinify extends WireData implements Module, ConfigurableModule {
     private static function _getFileInfoArray($_file, $extension) {
 
         // ------------------------------------------------------------------------
-        // Filter Directory Traversal
+        // Filter Directory Traversal (default: yes)
         // ------------------------------------------------------------------------
-        $_path  = str_ireplace(array('../', './', '%2e%2e%2f', '..%2F'), '', (wire('config')->paths->templates.$_file));
+        $_path  = (self::$directoryTraversal !== true) ? str_ireplace(array('../', './', '%2e%2e%2f', '..%2F'), '', wire('config')->paths->templates.$_file) : wire('config')->paths->templates.$_file;
         
         // ------------------------------------------------------------------------
         // Check existence and whether there is no external source.
