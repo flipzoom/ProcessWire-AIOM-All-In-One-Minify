@@ -9,7 +9,7 @@ require_once( dirname(__FILE__).'/Version.php');
  * @subpackage cache
  *
  */
-class Less_Cache {
+class Less_Cache{
 
     public static $cache_dir = false;       // directory less.php can use for storing data
 
