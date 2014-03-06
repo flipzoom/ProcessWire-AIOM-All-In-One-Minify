@@ -28,6 +28,7 @@ AIOM+ (All In One Minify) is a ProcessWire module to easily improve the performa
 * [LESS variables access in multiple files](#less-variables-access-in-multiple-files)
 * [Minimize Javascripts](#minimize-javascripts)
 * [Conditional loading](#conditional-loading)
+* [Directory Traversal Filter](#directory-traversal-filter)
 * [Exclude minimized files](#already-minimized-files-no-longer-minimized)
 * [Exemplary template structure](#exemplary-template-structure)
 * [Minimize HTML](#minimize-html)
@@ -125,7 +126,15 @@ Since AIOM+ version 3.1.1 javascripts, stylesheets and LESS files can be loaded 
 <link rel="stylesheet" type="text/css" href="<?php echo AllInOneMinify::CSS($stylesheets); ?>" />
 ```
 
-The same you can do with ```AIOM::JS()```. ```loadOn```must be an [ProcessWire API selector](http://processwire.com/api/selectors/).
+The same you can do with ```AIOM::JS()```. ```loadOn``` must be an [ProcessWire API selector](http://processwire.com/api/selectors/).
+
+##Directory Traversal Filter##
+
+By default, only files can be included, which are in ProcessWire template folder. If you wish to add files outside that folder, you have to activate the backend "Allow Directory Traversal" option. Then you can jump back in the path. For example: 
+```html+php 
+AIOM::CSS('../third-party-packages/package/css/example.css');
+```
+**All paths are still automatically corrected!**
 
 ##Already minimized files no longer minimized##
 
@@ -151,6 +160,11 @@ The generated HTML source code is automatically minimized when rendering. This r
 If you are currently in development of the site, caching can be a problem. For this, you can enable the development mode since version 1.1.0 in the Backend (Module > AIOM > Config). The files will be combined, but not minimized and re-generated at each call. In addition, a no-cache GET parameter is appended with a timestamp to prevent the browser caching. For example: ```css_031ea978b0e6486c828ba444c6297ca5_dev.css?no-cache=1335939007```
 
 ##Changelog##
+
+3.1.2 
+
+* New feature: Enable or disable directory traversal filter in backend ([#12](https://github.com/FlipZoomMedia/ProcessWire-AIOM-All-In-One-Minify/issues/12))
+* New LESS version: Update parser to Version 1.7
 
 3.1.1
 
