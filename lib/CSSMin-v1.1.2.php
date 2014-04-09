@@ -226,11 +226,6 @@ class CssMin {
         $_source = preg_replace('/((?<!\\\\)\:|\s)(\-?\d+)\.0([^\d])/S', '$1$2$3', $_source);
 
         // ------------------------------------------------------------------------
-        // Restore spaces for !important
-        // ------------------------------------------------------------------------
-        $_source = preg_replace('/\!important/i', ' !important', $_source);
-
-        // ------------------------------------------------------------------------
         // Replace 0 length units 0(px,em,%) with 0.
         // ------------------------------------------------------------------------
         $_source = preg_replace('/(?<!transition-delay:|transition-duration:|animation-delay:|ease|ease-in|ease-out|linear|step-start|step-end|steps|cubic-bezier|transition:all|transition:margin|transition:top|transition:right|transition:bottom|transition:left|transition:width|transition:height|transition:background|transition:background-image|transition:background-position)(^|[^0-9])(?:0?\.)?0(?:em|ex|ch|rem|vw|vh|vm|vmin|cm|mm|in|px|pt|pc|%|deg|g?rad|m?s|k?hz)/iS', '${1}0', $_source);
@@ -286,10 +281,10 @@ class CssMin {
         // ------------------------------------------------------------------------
         // Subsequent improvements with Find and Replace.
         // ------------------------------------------------------------------------
-        $search  = array(' > ', ' + ', ', ');
-        $replace = array('>', '+', ',');
+        $search  = array(' !important', ' > ', ' + ', ', ');
+        $replace = array('!important', '>', '+', ',');
         $_source = str_ireplace($search, $replace, $_source);
-
+        
         // ------------------------------------------------------------------------
         // Return the minimized string.
         // ------------------------------------------------------------------------
