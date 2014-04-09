@@ -161,6 +161,18 @@ If you are currently in development of the site, caching can be a problem. For t
 
 ##Changelog##
 
+3.1.3
+
+* New LESS version: Update parser to version 1.7.1
+  * improved parser exceptions with invalid less
+  * prevent fround() from changing integer into double
+  * prevent fatal error with preg_match()
+  * fix undefined variable
+* New CSSMin version: Update script to version 1.1.2
+  * Some improvements
+  * Bugfix: Broken rule for firefox 27.0.1 (Animation second "s" lost)
+* Push to stable
+
 3.1.2 
 
 * New feature: Enable or disable directory traversal filter in backend ([#12](https://github.com/FlipZoomMedia/ProcessWire-AIOM-All-In-One-Minify/issues/12))
