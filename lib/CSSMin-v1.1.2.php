@@ -203,6 +203,12 @@ class CssMin {
         $_source = preg_replace('/}[^\/}]+{}/', '}', $_source);
 
         // ------------------------------------------------------------------------
+        // Replace positive sign from numbers preceded by : or a white-space before the leading space is removed
+        // +1.2em to 1.2em, +.8px to .8px, +2% to 2%
+        // ------------------------------------------------------------------------
+        $_source = preg_replace('/((?<!\\\\)\:|\s)\+(\.?\d+)/S', '$1$2', $_source);
+
+        // ------------------------------------------------------------------------
         // Remove leading zeros from integer and float numbers preceded by : or a 
         // white-space: 000.6 to .6, -0.8 to -.8, 0050 to 50, -01.05 to -1.05
         // ------------------------------------------------------------------------
@@ -222,7 +228,7 @@ class CssMin {
         // ------------------------------------------------------------------------
         // Replace 0 length units 0(px,em,%) with 0.
         // ------------------------------------------------------------------------
-        $_source = preg_replace('/(^|[^0-9])(?:0?\.)?0(?:em|ex|ch|rem|vw|vh|vm|vmin|cm|mm|in|px|pt|pc|%|deg|g?rad|m?s|k?hz)/iS', '${1}0', $_source);
+        $_source = preg_replace('/(?<!transition-delay:|transition-duration:|animation-delay:|ease|ease-in|ease-out|linear|step-start|step-end|steps|cubic-bezier|transition:all|transition:margin|transition:top|transition:right|transition:bottom|transition:left|transition:width|transition:height|transition:background|transition:background-image|transition:background-position)(^|[^0-9])(?:0?\.)?0(?:em|ex|ch|rem|vw|vh|vm|vmin|cm|mm|in|px|pt|pc|%|deg|g?rad|m?s|k?hz)/iS', '${1}0', $_source);
 
         // ------------------------------------------------------------------------
         // 0% step in a keyframe? restore the % unit
@@ -247,9 +253,15 @@ class CssMin {
         $_source = preg_replace('/(background\-position|webkit-mask-position|(?:webkit|moz|o|ms|)\-?transform\-origin)\:0(;|\}| \!)/iS', '$1:0 0$2', $_source);
 
         // ------------------------------------------------------------------------
-        // Replkace border: none to border:0, outline: none to outline:0
+        // Replace border: none to border:0, outline: none to outline:0
         // ------------------------------------------------------------------------
         $_source = preg_replace('/(border\-?(?:top|right|bottom|left|)|outline)\:none(;|\}| \!)/iS', '$1:0$2', $_source);
+
+        // ------------------------------------------------------------------------
+        // Put the space back in some cases, to support stuff like
+        // @media screen and (-webkit-min-device-pixel-ratio:0){
+        // ------------------------------------------------------------------------
+        $_source = preg_replace('/\band\(/i', 'and (', $_source);
 
         // ------------------------------------------------------------------------
         // Shorter opacity IE filter
@@ -272,7 +284,7 @@ class CssMin {
         $search  = array(' !important', ' > ', ' + ', ', ');
         $replace = array('!important', '>', '+', ',');
         $_source = str_ireplace($search, $replace, $_source);
-
+        
         // ------------------------------------------------------------------------
         // Return the minimized string.
         // ------------------------------------------------------------------------
