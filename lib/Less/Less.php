@@ -2040,6 +2040,7 @@ class Less_Parser{
                 $hasBlock = false;
                 break;
             case "@keyframes":
+            case "@-webkit-keyframes":
                 $hasIdentifier = true;
                 break;
             case "@host":
