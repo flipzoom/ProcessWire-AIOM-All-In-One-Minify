@@ -447,6 +447,13 @@ class AllInOneMinify extends WireData implements Module, ConfigurableModule {
             require_once(wire('config')->paths->AllInOneMinify.'lib'.DIRECTORY_SEPARATOR.'JSMin-v2.1.7.php');
 
             // ------------------------------------------------------------------------
+            // Expire all CacheFiles
+            // ------------------------------------------------------------------------
+            if (class_exists('PageRender')) {
+                CacheFile::removeAll(wire('config')->paths->cache . PageRender::cacheDirName . "/");
+            }
+
+            // ------------------------------------------------------------------------
             // Initialize $_js variable for output
             // ------------------------------------------------------------------------
             $_js = '';
@@ -580,7 +587,7 @@ class AllInOneMinify extends WireData implements Module, ConfigurableModule {
                 // Load source of file and rewrite absolute URLs.
                 // ------------------------------------------------------------------------
                 $_css_src   = file_get_contents($stylesheet['absolute_path']).PHP_EOL;
-                $_css_src   = (!empty($_css_src)) ? Minify_CSS_UriRewriter::rewrite($_css_src, dirname($stylesheet['absolute_path'])) : $_css_src;
+                $_css_src = (!empty($_css_src)) ? Minify_CSS_UriRewriter::rewrite($_css_src, dirname($stylesheet['absolute_path']),wire('config')->paths->root) : $_css_src;
 
                 // ------------------------------------------------------------------------
                 // If LESS file then run LESS parser.
