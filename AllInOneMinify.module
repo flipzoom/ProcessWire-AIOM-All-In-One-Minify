@@ -450,7 +450,7 @@ class AllInOneMinify extends WireData implements Module, ConfigurableModule {
             // Expire all CacheFiles
             // ------------------------------------------------------------------------
             if (class_exists('PageRender')) {
-                CacheFile::removeAll(wire('config')->paths->cache . PageRender::cacheDirName . "/");
+                if (file_exists(wire('config')->paths->cache . PageRender::cacheDirName . "/")) CacheFile::removeAll(wire('config')->paths->cache . PageRender::cacheDirName . "/");
             }
 
             // ------------------------------------------------------------------------
@@ -569,7 +569,7 @@ class AllInOneMinify extends WireData implements Module, ConfigurableModule {
             // Expire all CacheFiles
             // ------------------------------------------------------------------------
             if (class_exists('PageRender')) {
-                CacheFile::removeAll(wire('config')->paths->cache . PageRender::cacheDirName . "/");
+                if (file_exists(wire('config')->paths->cache . PageRender::cacheDirName . "/")) CacheFile::removeAll(wire('config')->paths->cache . PageRender::cacheDirName . "/");
             }
 
             // ------------------------------------------------------------------------
