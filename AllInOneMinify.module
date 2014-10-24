@@ -231,7 +231,7 @@ class AllInOneMinify extends WireData implements Module, ConfigurableModule {
         $field              = wire('modules')->get('InputfieldMarkup');
         $field->columnWidth = 50;
         $field->label       = __('How to use AIOM+');
-        $field->description = sprintf(__('Quick introduction to the module and how you use it. Full documentation under: %s'), 'https://github.com/FlipZoomMedia/ProcessWire-AIOM-All-In-One-Minify');
+        $field->description = sprintf(__('Quick introduction to the module and how you use it. Full documentation under: %s'), 'https://github.com/conclurer/ProcessWire-AIOM-All-In-One-Minify');
         $field->markupText  = file_get_contents(wire('config')->paths->AllInOneMinify.'doc'.DIRECTORY_SEPARATOR.'how-to-use.html');
         $fields->add($field);
 
@@ -674,7 +674,7 @@ class AllInOneMinify extends WireData implements Module, ConfigurableModule {
      * @return string           The minimized with code generation information
      */
     private static function _generatorInformation($data) {
-        return (!empty($data)) ? '/** Generated: '.date('l, jS \of F Y, h:i:s A').' // Powered by AIOM+ (All In One Minify) by www.flipzoom.de **/'.PHP_EOL.$data : '';
+        return (!empty($data)) ? '/** Generated: '.date('l, jS \of F Y, h:i:s A').' // Powered by AIOM+ (All In One Minify) created by David Karich **/'.PHP_EOL.$data : '';
     }
 
     /**
