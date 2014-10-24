@@ -15,11 +15,11 @@ AIOM+ (All In One Minify) is a ProcessWire module to easily improve the performa
 * During development, you can enable developer mode. Files are parsed and combined, but not minimized and browser caching is prevented.
 * You can use the short syntax ```AIOM``` or use the full class name ```AllInOneMinify``` in your templates.
 * The generated files can be delivered via a subdomain (Domain sharding / Cookieless domain)
-* **NEW FEATURE**: LESS files can directly server side generated on the fly, without plugins. AIOM+ has a complete, high-performance PHP ported LESS library of the official LESS processor included! 
+* LESS files can directly server side generated on the fly, without plugins. AIOM+ has a complete, high-performance PHP ported LESS library of the official LESS processor included! 
 * **NOTE**: There are a few unsupported LESS features: 
     * Evaluation of JavaScript expressions within back-ticks (for obvious reasons)
     * Definition of custom functions
-* **NEW FEATURE**: Conditional loading of files based on a API selector
+* Conditional loading of files based on a API selector
 
 ##Table of content##
 
@@ -153,13 +153,19 @@ site/
 
 The generated HTML source code is automatically minimized when rendering. This requires no change to the templates. Conditional Comments, textareas, code tags, etc. are excluded from the minimization.
 
-**NOTE**: AIOM+ removes all whitespaces between two tags. If you explicitly need a whitespace, change the whitespace into an HTML entity: ```&nbsp;```. See ([#6](https://github.com/FlipZoomMedia/ProcessWire-AIOM-All-In-One-Minify/issues/6))
+**NOTE**: AIOM+ removes all whitespaces between two tags. If you explicitly need a whitespace, change the whitespace into an HTML entity: ```&nbsp;```. See ([#6](https://github.com/conclurer/ProcessWire-AIOM-All-In-One-Minify/issues/6))
 
 ##Development mode##
 
 If you are currently in development of the site, caching can be a problem. For this, you can enable the development mode since version 1.1.0 in the Backend (Module > AIOM > Config). The files will be combined, but not minimized and re-generated at each call. In addition, a no-cache GET parameter is appended with a timestamp to prevent the browser caching. For example: ```css_031ea978b0e6486c828ba444c6297ca5_dev.css?no-cache=1335939007```
 
 ##Changelog##
+
+3.1.4
+
+* Bugfix: CacheFiles for Pages are now deleted when a new minimized file is created
+* Bugfix: An error is thrown if the document root is different to ProcessWire's base path
+* Note: AIOM is now also developed by [Conclurer](https://www.conclurer.com).
 
 3.1.3
 
@@ -175,7 +181,7 @@ If you are currently in development of the site, caching can be a problem. For t
 
 3.1.2 
 
-* New feature: Enable or disable directory traversal filter in backend ([#12](https://github.com/FlipZoomMedia/ProcessWire-AIOM-All-In-One-Minify/issues/12))
+* New feature: Enable or disable directory traversal filter in backend ([#12](https://github.com/conclurer/ProcessWire-AIOM-All-In-One-Minify/issues/12))
 * New LESS version: Update parser to Version 1.7
 
 3.1.1
@@ -185,7 +191,7 @@ If you are currently in development of the site, caching can be a problem. For t
 
 3.0.1
 
-* BugFix ([#11](https://github.com/FlipZoomMedia/ProcessWire-AIOM-All-In-One-Minify/issues/11)): Wrong class order in Less.php parser (Thanks to Ryan Pierce)
+* BugFix ([#11](https://github.com/conclurer/ProcessWire-AIOM-All-In-One-Minify/issues/11)): Wrong class order in Less.php parser (Thanks to Ryan Pierce)
 
 3.0.0 
 
@@ -196,9 +202,9 @@ If you are currently in development of the site, caching can be a problem. For t
 
 2.2.2 
 
-* BugFix ([#8](https://github.com/FlipZoomMedia/ProcessWire-AIOM-All-In-One-Minify/issues/8)): Many errors if debug mode is activated (Thanks to JoZ3)
+* BugFix ([#8](https://github.com/conclurer/ProcessWire-AIOM-All-In-One-Minify/issues/8)): Many errors if debug mode is activated (Thanks to JoZ3)
 * Better error handling
-* Additional information about spaces in the HTML minimization. See ([#6](https://github.com/FlipZoomMedia/ProcessWire-AIOM-All-In-One-Minify/issues/6)) (Thanks to philippreiner)
+* Additional information about spaces in the HTML minimization. See ([#6](https://github.com/conclurer/ProcessWire-AIOM-All-In-One-Minify/issues/6)) (Thanks to philippreiner)
 
 2.2.1
 
@@ -238,7 +244,7 @@ If you are currently in development of the site, caching can be a problem. For t
 
 1.1.0  
 
-* BugFix ([#1](https://github.com/FlipZoomMedia/ProcessWire-AIOM-All-In-One-Minify/issues/1)): Error: Exception: RecursiveDirectoryIterator ... Permission denied (Thanks to JoZ3 and Ryan)
+* BugFix ([#1](https://github.com/conclurer/ProcessWire-AIOM-All-In-One-Minify/issues/1)): Error: Exception: RecursiveDirectoryIterator ... Permission denied (Thanks to JoZ3 and Ryan)
 * New Short-Syntax AIOM::CSS(); and AIOM::JS();
 * New default settings for css minify (speed up minimizing)
 * New option: enable/disable HTML minify
@@ -250,17 +256,11 @@ If you are currently in development of the site, caching can be a problem. For t
 
 ##Questions or comments?##
 
-My Name is David Karich. Send me an E-Mail with your questions, suggestions or bugs to support@flipzoom.de. 
+For any questions, suggestions or bugs please create a ticket on [GitHub](https://github.com/conclurer/ProcessWire-AIOM-All-In-One-Minify/issues). 
 
-##Test environment##
-
-* ProcessWire in Version 2.3 and 2.4
-* Windows (WAMP) / Linux (CentOS 6.4/6.5)
-* PHP 5.3.3, 5.5.3
-* Apache 2.2.21
 
 ##Old stable Version needed?##
 
-Under the following link you can find the old stable version of AIOM without LESS support: https://github.com/FlipZoomMedia/ProcessWire-AIOM-All-In-One-Minify/tree/AIOM-(old-Stable-2.2.2)
+Under the following link you can find the old stable version of AIOM without LESS support: https://github.com/conclurer/ProcessWire-AIOM-All-In-One-Minify/tree/AIOM-(old-Stable-2.2.2)
 
 [![Analytics](https://ga-beacon.appspot.com/UA-7951064-10/ProcessWire-AIOM-All-In-One-Minify/blob/master/README.md?pixel)](https://github.com/igrigorik/ga-beacon)

@@ -1,14 +1,15 @@
 <?php
 
 /**
- * @author  FlipZoom Media Inc. - David Karich
- * @contact David Karich <david.karich@flipzoom.de>
- * @website www.flipzoom.de
+ * @author  FlipZoom Media Inc. - David Karich & Conclurer GbR
+ * @contact David Karich <david.karich@flipzoom.de>, Conclurer GbR <aiom@conclurer.com>
+ * @website www.flipzoom.de, www.conclurer.com
  * @create  2013-11-26
  * @style   Tab size: 4 / Soft tabs: YES
  * ----------------------------------------------------------------------------------
  * @licence
  * Copyright (c) 2013 FlipZoom Media Inc. - David Karich
+ * Copyright (c) 2014 Conclurer GbR
  * Permission is hereby granted, free of charge, to any person obtaining a copy 
  * of this software and associated documentation files (the "Software"), to deal 
  * in the Software without restriction, including without limitation the rights 
@@ -67,7 +68,9 @@ class AllInOneMinify extends WireData implements Module, ConfigurableModule {
             // ------------------------------------------------------------------------
             // Version: major, minor, revision, i.e. 100 = 1.1.0
             // ------------------------------------------------------------------------
-            'version' => 313, 
+            'version' => 314,
+
+            'author' => 'David Karich & Conclurer GbR',
 
             // ------------------------------------------------------------------------
             // Summary is brief description of what this module is
@@ -77,7 +80,7 @@ class AllInOneMinify extends WireData implements Module, ConfigurableModule {
             // ------------------------------------------------------------------------
             // Optional URL to more information about the module
             // ------------------------------------------------------------------------
-            'href' => 'https://github.com/FlipZoomMedia/ProcessWire-AIOM-All-In-One-Minify',
+            'href' => 'https://github.com/conclurer/ProcessWire-AIOM-All-In-One-Minify',
 
             // ------------------------------------------------------------------------
             // singular=true: indicates that only one instance of the module is allowed.
@@ -228,7 +231,7 @@ class AllInOneMinify extends WireData implements Module, ConfigurableModule {
         $field              = wire('modules')->get('InputfieldMarkup');
         $field->columnWidth = 50;
         $field->label       = __('How to use AIOM+');
-        $field->description = sprintf(__('Quick introduction to the module and how you use it. Full documentation under: %s'), 'https://github.com/FlipZoomMedia/ProcessWire-AIOM-All-In-One-Minify');
+        $field->description = sprintf(__('Quick introduction to the module and how you use it. Full documentation under: %s'), 'https://github.com/conclurer/ProcessWire-AIOM-All-In-One-Minify');
         $field->markupText  = file_get_contents(wire('config')->paths->AllInOneMinify.'doc'.DIRECTORY_SEPARATOR.'how-to-use.html');
         $fields->add($field);
 
@@ -444,6 +447,13 @@ class AllInOneMinify extends WireData implements Module, ConfigurableModule {
             require_once(wire('config')->paths->AllInOneMinify.'lib'.DIRECTORY_SEPARATOR.'JSMin-v2.1.7.php');
 
             // ------------------------------------------------------------------------
+            // Expire all CacheFiles
+            // ------------------------------------------------------------------------
+            if (class_exists('PageRender')) {
+                CacheFile::removeAll(wire('config')->paths->cache . PageRender::cacheDirName . "/");
+            }
+
+            // ------------------------------------------------------------------------
             // Initialize $_js variable for output
             // ------------------------------------------------------------------------
             $_js = '';
@@ -556,13 +566,20 @@ class AllInOneMinify extends WireData implements Module, ConfigurableModule {
             require_once(wire('config')->paths->AllInOneMinify.'lib'.DIRECTORY_SEPARATOR.'Less'.DIRECTORY_SEPARATOR.'Less.php');
 
             // ------------------------------------------------------------------------
-            // Initialize $_js variable for output
+            // Expire all CacheFiles
+            // ------------------------------------------------------------------------
+            if (class_exists('PageRender')) {
+                CacheFile::removeAll(wire('config')->paths->cache . PageRender::cacheDirName . "/");
+            }
+
+            // ------------------------------------------------------------------------
+            // Initialize $_css variable for output
             // ------------------------------------------------------------------------
             $_css       = '';
 
             // ------------------------------------------------------------------------
             // Load all content, minimize the contents, rewrite the URLs and paste 
-            // everything in a Varibale together.
+            // everything in a variable together.
             // ------------------------------------------------------------------------
             foreach ($stylesheets as $stylesheet) {
 
@@ -570,7 +587,7 @@ class AllInOneMinify extends WireData implements Module, ConfigurableModule {
                 // Load source of file and rewrite absolute URLs.
                 // ------------------------------------------------------------------------
                 $_css_src   = file_get_contents($stylesheet['absolute_path']).PHP_EOL;
-                $_css_src   = (!empty($_css_src)) ? Minify_CSS_UriRewriter::rewrite($_css_src, dirname($stylesheet['absolute_path'])) : $_css_src;
+                $_css_src = (!empty($_css_src)) ? Minify_CSS_UriRewriter::rewrite($_css_src, dirname($stylesheet['absolute_path']),wire('config')->paths->root) : $_css_src;
 
                 // ------------------------------------------------------------------------
                 // If LESS file then run LESS parser.
@@ -657,7 +674,7 @@ class AllInOneMinify extends WireData implements Module, ConfigurableModule {
      * @return string           The minimized with code generation information
      */
     private static function _generatorInformation($data) {
-        return (!empty($data)) ? '/** Generated: '.date('l, jS \of F Y, h:i:s A').' // Powered by AIOM+ (All In One Minify) by www.flipzoom.de **/'.PHP_EOL.$data : '';
+        return (!empty($data)) ? '/** Generated: '.date('l, jS \of F Y, h:i:s A').' // Powered by AIOM+ (All In One Minify) created by David Karich **/'.PHP_EOL.$data : '';
     }
 
     /**
