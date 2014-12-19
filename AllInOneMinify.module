@@ -417,6 +417,10 @@ class AllInOneMinify extends WireData implements Module, ConfigurableModule {
         // ------------------------------------------------------------------------
         if(empty($javascripts)) throw new WireException('There were no files specified to minimize.');
 
+        // Support passing of $config->scripts as argument which is of type FilenameArray
+        if(($javascripts instanceof FilenameArray))
+            $stylesheets = (array) $javascripts->getIterator(); // Convert to array
+
         // ------------------------------------------------------------------------
         // Check if files exist and generating the cache file name based 
         // on the last editing of the file.
@@ -505,7 +509,11 @@ class AllInOneMinify extends WireData implements Module, ConfigurableModule {
         // Check if at least one file was passed.
         // ------------------------------------------------------------------------
         if(empty($stylesheets)) throw new WireException('There were no files specified to minimize.');
-        
+
+        // Support passing of $config->styles as argument which is of type FilenameArray
+        if(($stylesheets instanceof FilenameArray))
+            $stylesheets = (array) $stylesheets->getIterator(); // Convert to array
+
         // ------------------------------------------------------------------------
         // Check if files exist and generating the cache file name based 
         // on the last editing of the file.
