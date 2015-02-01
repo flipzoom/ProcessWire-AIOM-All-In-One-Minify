@@ -68,7 +68,7 @@ class AllInOneMinify extends WireData implements Module, ConfigurableModule {
             // ------------------------------------------------------------------------
             // Version: major, minor, revision, i.e. 100 = 1.1.0
             // ------------------------------------------------------------------------
-            'version' => 314,
+            'version' => 315,
 
             'author' => 'David Karich & Conclurer GbR',
 
@@ -587,7 +587,7 @@ class AllInOneMinify extends WireData implements Module, ConfigurableModule {
                 // Load source of file and rewrite absolute URLs.
                 // ------------------------------------------------------------------------
                 $_css_src   = file_get_contents($stylesheet['absolute_path']).PHP_EOL;
-                $_css_src = (!empty($_css_src)) ? Minify_CSS_UriRewriter::rewrite($_css_src, dirname($stylesheet['absolute_path']),wire('config')->paths->root) : $_css_src;
+                $_css_src = (!empty($_css_src)) ? Minify_CSS_UriRewriter::rewrite($_css_src, dirname($stylesheet['absolute_path'])) : $_css_src;
 
                 // ------------------------------------------------------------------------
                 // If LESS file then run LESS parser.
