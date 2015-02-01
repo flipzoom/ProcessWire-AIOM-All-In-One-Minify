@@ -161,6 +161,10 @@ If you are currently in development of the site, caching can be a problem. For t
 
 ##Changelog##
 
+3.1.5
+
+* Bugfix: Links to images, which are embedded in CSS, are broken if the DOCUMENT_ROOT is not equal to ProcessWire root. 
+
 3.1.4
 
 * Bugfix: CacheFiles for Pages are now deleted when a new minimized file is created
