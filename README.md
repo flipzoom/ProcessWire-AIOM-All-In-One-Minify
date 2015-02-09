@@ -161,6 +161,13 @@ If you are currently in development of the site, caching can be a problem. For t
 
 ##Changelog##
 
+3.2
+
+* New CSS Compressor: AIOM now uses YUI Compressor (thanks to hwmaier)
+* You can now use $config->scripts and $config->styles in AIOM (#31)
+* Bugfix: Empty {} brackets will only be partly removed (#23)
+* Bugfix: CSS pseudo classes will be compressed incorrectly (#33)
+
 3.1.5
 
 * Bugfix: Links to images, which are embedded in CSS, are broken if the DOCUMENT_ROOT is not equal to ProcessWire root. 
