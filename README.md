@@ -161,6 +161,11 @@ If you are currently in development of the site, caching can be a problem. For t
 
 ##Changelog##
 
+3.2.1
+
+* Bugfix: $config->scripts was not included properly
+* Support for @-webkit-keyframes added
+
 3.2
 
 * New CSS Compressor: AIOM now uses YUI Compressor (thanks to hwmaier)
