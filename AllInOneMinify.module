@@ -594,8 +594,71 @@ class AllInOneMinify extends WireData implements Module, ConfigurableModule {
                 // Load source of file and rewrite absolute URLs.
                 // ------------------------------------------------------------------------
                 $_css_src   = file_get_contents($stylesheet['absolute_path']).PHP_EOL;
-                $_css_src = (!empty($_css_src)) ? Minify_CSS_UriRewriter::rewrite($_css_src, dirname($stylesheet['absolute_path'])) : $_css_src;
 
+                // FIXME check if base path was rewritten
+                
+                // case (1):
+                //$_css_src = (!empty($_css_src)) ? Minify_CSS_UriRewriter::rewrite($_css_src, dirname($stylesheet['absolute_path'])) : $_css_src;
+                
+                // case (2):
+                //$_css_src = (!empty($_css_src)) ? Minify_CSS_UriRewriter::rewrite($_css_src, dirname($stylesheet['absolute_path']),wire('config')->paths->root) : $_css_src;
+                
+                /*
+				echo "CSS_SRC:";
+                print_r($stylesheet['absolute_path']);			// LOCAL:  C:/develop/xampp-win32-1.7.7-VC9/xampp/htdocs/webdev/site/templates/styles/main.css
+                												// REMOTE: /customers/X/X/X/example.com/httpd.www/beta/site/templates/styles/main.css
+                												
+                echo "CSS_SRC(DIRNAME):";
+                print_r(dirname($stylesheet['absolute_path']));	// LOCAL:  C:/develop/xampp-win32-1.7.7-VC9/xampp/htdocs/webdev/site/templates/styles
+                												// REMOTE: /customers/X/X/X/example.com/httpd.www/beta/site/templates/styles
+                												
+                echo "CONFIG_ROOT:";
+                print_r(wire('config')->paths->root);			// LOCAL:  C:/develop/xampp-win32-1.7.7-VC9/xampp/htdocs/webdev/
+                												// REMOTE: /customers/X/X/X/example.com/httpd.www/beta/
+                												
+                echo "CONFIG ROOT URL:";						
+                print_r(wire('config')->urls->root);			// LOCAL:  /webdev/
+                												// REMOTE: /
+                
+                echo "SERVER DOCUMENT ROOT:";				
+                print_r($_SERVER['DOCUMENT_ROOT']);				// LOCAL:  C:/develop/xampp-win32-1.7.7-VC9/xampp/htdocs
+                												// REMOTE: /customers/X/X/X/example.com/httpd.www
+                
+                */
+
+                // LOCAL: example for relative url in css file
+                // case (1): src:url('/webdev/site/templates/styles/fonts/OpenSans-Regular-webfont.eot?#iefix')		// WORKS!
+                // case (2): src:url('/site/templates/styles/fonts/OpenSans-Regular-webfont.eot?#iefix')			// FAIL! should use /webdev/ in relative url
+                
+                
+                // REMOTE: example for relative url in css file
+				// case (1): src:url('/beta/site/templates/styles/fonts/OpenSans-Regular-webfont.eot?#iefix')		// FAIL! should remove /beta/ in relative url
+				// case (2): src:url('/site/templates/styles/fonts/OpenSans-Regular-webfont.eot?#iefix')			// WORKS!
+                
+                
+                // TODO we will now find out the base path and if it matches the root url:
+                
+                $config_path_root = wire('config')->paths->root;
+                $server_document_root = $_SERVER['DOCUMENT_ROOT'];
+                
+                $base_path = str_replace($server_document_root,"",$config_path_root);
+                
+                /*
+                echo "BASE_PATH:";
+                print_r($base_path);						// LOCAL:  /webdev/		=> is root url => base path is not rewritten
+                											// REMOTE: /beta/		=> is not root url => base path is rewritten
+                
+                */
+                
+                $config_url_root = wire('config')->urls->root;
+                 
+                if($base_path != $config_url_root) {
+                	$_css_src = (!empty($_css_src)) ? Minify_CSS_UriRewriter::rewrite($_css_src, dirname($stylesheet['absolute_path']),wire('config')->paths->root) : $_css_src;
+                } else {
+                	$_css_src = (!empty($_css_src)) ? Minify_CSS_UriRewriter::rewrite($_css_src, dirname($stylesheet['absolute_path'])) : $_css_src;
+                }
+                
+                
                 // ------------------------------------------------------------------------
                 // If LESS file then run LESS parser.
                 // ------------------------------------------------------------------------
