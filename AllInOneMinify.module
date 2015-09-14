@@ -47,6 +47,7 @@ class AllInOneMinify extends WireData implements Module, ConfigurableModule {
     private static $domainSharding;
     private static $domainShardingSSL;
     private static $templateUseSSL;
+    private static $emptyCacheOnPageSave;
 
     /**
      * ------------------------------------------------------------------------
@@ -117,7 +118,7 @@ class AllInOneMinify extends WireData implements Module, ConfigurableModule {
         $field              = wire('modules')->get('InputfieldText');
         $field->name        = 'stylesheet_prefix';
         $field->label       = __('Stylesheet-Prefix');
-        $field->columnWidth = 33;
+        $field->columnWidth = 25;
         $field->value       = (!empty($data['stylesheet_prefix'])) ? wire('sanitizer')->name($data['stylesheet_prefix']) : 'css_';
         $field->description = __('The prefix of the generated combined stylesheet file. Allowed: Alphanumeric characters like "A-Z, 0-9 and _ -".');
         $fields->add($field); 
@@ -128,7 +129,7 @@ class AllInOneMinify extends WireData implements Module, ConfigurableModule {
         $field              = wire('modules')->get('InputfieldText');
         $field->name        = 'javascript_prefix';
         $field->label       = __('Javascript-Prefix');
-        $field->columnWidth = 34;
+        $field->columnWidth = 25;
         $field->value       = (!empty($data['javascript_prefix'])) ? wire('sanitizer')->name($data['javascript_prefix']) : 'js_';
         $field->description = __('The prefix of the generated combined javascript file. Allowed: Alphanumeric characters like "A-Z, 0-9 and _ -".');
         $fields->add($field); 
@@ -139,10 +140,22 @@ class AllInOneMinify extends WireData implements Module, ConfigurableModule {
         $field              = wire('modules')->get('InputfieldText');
         $field->name        = 'max_cache_lifetime';
         $field->label       = __('Lifetime');
-        $field->columnWidth = 33;
+        $field->columnWidth = 25;
         $field->value       = (!empty($data['max_cache_lifetime'])) ? self::_sanitizeNumericCacheTime($data['max_cache_lifetime']) : 2419200;
         $field->description = __('The max. lifetime of the cached files in seconds. Min. 60 seconds, max. 31536000 seconds (1 year).');
         $fields->add($field);
+
+        // ------------------------------------------------------------------------
+        // Define checkbox field to enable or disable cache clearing on page save.
+        // ------------------------------------------------------------------------
+        $field              = wire('modules')->get('InputfieldCheckbox');
+        $field->name        = 'empty_cache_on_page_save';
+        $field->label       = __('Clear Cache On Page Save');
+        $field->columnWidth = 25;
+        $field->value       = (isset($data['empty_cache_on_page_save'])) ? $data['empty_cache_on_page_save'] : 0;
+        $field->checked     = ($field->value == 1) ? 'checked' : '';
+        $field->description = __('Clear the cache after a page has been saved?');
+        $fields->add($field); 
 
         // ------------------------------------------------------------------------
         // Define checkbox field to enable or disable the HTML minimization.
@@ -290,7 +303,7 @@ class AllInOneMinify extends WireData implements Module, ConfigurableModule {
         // ------------------------------------------------------------------------
         // Remove all combined files in the cache folder.
         // ------------------------------------------------------------------------
-        self::_clearCache(true);
+        self::clearCache(true);
 
         // ------------------------------------------------------------------------
         // Try to remove the cache folder.
@@ -349,6 +362,8 @@ class AllInOneMinify extends WireData implements Module, ConfigurableModule {
         // ------------------------------------------------------------------------
         $this->domain_sharding      = '';
         $this->domain_sharding_ssl  = '';
+        
+        $this->empty_cache_on_page_save = false;
     }
 
     /**
@@ -378,6 +393,7 @@ class AllInOneMinify extends WireData implements Module, ConfigurableModule {
         self::$directoryTraversal   = ($this->directory_traversal == 1) ? true : false;
         self::$domainSharding       = self::_validateURL($this->domain_sharding);
         self::$domainShardingSSL    = self::_validateURL($this->domain_sharding_ssl);
+        self::$emptyCacheOnPageSave = ($this->empty_cache_on_page_save == 1) ? true : false;
 
         // ------------------------------------------------------------------------
         // Add a hook that is called after rendering the page and minimize the 
@@ -389,13 +405,17 @@ class AllInOneMinify extends WireData implements Module, ConfigurableModule {
         // Check if already cached files longer than the configured time exist. 
         // If so, remove those files.
         // ------------------------------------------------------------------------
-        self::_clearCache();
+        self::clearCache();
 
         // ------------------------------------------------------------------------
         // Add a hook that is called after rendering the page and clear the cache 
         // if parameter and template are correct.
         // ------------------------------------------------------------------------
         $this->addHookAfter('Page::render', $this, 'ClearCacheFromBackend');
+        
+        if(self::$emptyCacheOnPageSave) {
+            $this->pages->addHookAfter('save', $this, 'clearCache');
+        }
     }
 
     /**
@@ -635,7 +655,7 @@ class AllInOneMinify extends WireData implements Module, ConfigurableModule {
         // ------------------------------------------------------------------------
         return (self::$developmentMode !== true) ? $assetDomain.'/'.$cacheFile : $assetDomain.'/'.$cacheFile.'?no-cache='.time();
     }
-
+    
     /**
      * ------------------------------------------------------------------------
      * Check the already cached files according to its maximum lifetime. 
@@ -644,13 +664,22 @@ class AllInOneMinify extends WireData implements Module, ConfigurableModule {
      * ------------------------------------------------------------------------
      * @param boolean $force_all Force Delete all the files in the cache folder.
      */
-    private static function _clearCache($force_all = false) {
+    protected static function clearCache($force_all = false) {
         
         // ------------------------------------------------------------------------
         // Check if cache folder exist.
         // ------------------------------------------------------------------------
         $_this = new self();
         $_this->___install();
+        
+        // ------------------------------------------------------------------------
+        // Check instanceof $force_all, if "HookEvent", set $force_all to true
+        // ------------------------------------------------------------------------
+        
+        if($force_all instanceof HookEvent) {
+            $force_all = true;
+            $_this->message('AllInOneMinify: Cache cleared.');
+        }
         
         // ------------------------------------------------------------------------
         // Generating a data iterator of the cache directory.
@@ -859,7 +888,7 @@ class AllInOneMinify extends WireData implements Module, ConfigurableModule {
             // ------------------------------------------------------------------------
             // Clear cache.
             // ------------------------------------------------------------------------
-            self::_clearCache(true);
+            self::clearCache(true);
 
             // ------------------------------------------------------------------------
             // Redirect to module configuration.
