@@ -605,6 +605,12 @@ class AllInOneMinify extends WireData implements Module, ConfigurableModule {
                 if($stylesheet['file_extension'] === 'less') {
                     try {
                         $_less_parser   = new Less_Parser();
+                        if ($isVirtualHost) {
+                            $relativeDirectory = DIRECTORY_SEPARATOR 
+                                    . str_replace(wire('config')->paths->root, '', dirname($stylesheet['absolute_path']))
+                                    . DIRECTORY_SEPARATOR ;
+                            $_less_parser->SetImportDirs([ dirname($stylesheet['absolute_path']) . DIRECTORY_SEPARATOR => $relativeDirectory ] );
+                        }
                         $_less_parser->parse($_css_src);
                         $_css_src       = $_less_parser->getCss();
 
