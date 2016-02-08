@@ -295,7 +295,7 @@ class AllInOneMinify extends WireData implements Module, ConfigurableModule {
         // ------------------------------------------------------------------------
         // Try to remove the cache folder.
         // ------------------------------------------------------------------------
-        if(chmod(wire('config')->paths->assets.self::$cacheDir.DIRECTORY_SEPARATOR, 0777) === false OR rmdir(wire('config')->paths->assets.self::$cacheDir.DIRECTORY_SEPARATOR) === false) {
+        if(wireChmod(wire('config')->paths->assets.self::$cacheDir.DIRECTORY_SEPARATOR) === false OR rmdir(wire('config')->paths->assets.self::$cacheDir.DIRECTORY_SEPARATOR) === false) {
 
             // ------------------------------------------------------------------------
             // If the folder and files can not be removed, trigger an error.
@@ -663,7 +663,7 @@ class AllInOneMinify extends WireData implements Module, ConfigurableModule {
         foreach ($_cacheFiles as $_cacheFile) {
             if (((filemtime(wire('config')->paths->assets.self::$cacheDir.DIRECTORY_SEPARATOR.$_cacheFile->getFilename()) + self::$cacheMaxLifetime) < time() OR $force_all === true) AND is_file($_cacheFile)) {
                 $_file  = wire('config')->paths->assets.self::$cacheDir.DIRECTORY_SEPARATOR.$_cacheFile->getFilename();
-                if(chmod($_file, 0777) !== false) {
+                if(wireChmod($_file) !== false) {
                     if(unlink($_file) === false) {
                         throw new WireException('The old cache files could not be deleted.');
                     }
