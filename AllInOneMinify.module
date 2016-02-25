@@ -68,7 +68,7 @@ class AllInOneMinify extends WireData implements Module, ConfigurableModule {
             // ------------------------------------------------------------------------
             // Version: major, minor, revision, i.e. 100 = 1.1.0
             // ------------------------------------------------------------------------
-            'version' => 322,
+            'version' => 323,
 
             'author' => 'David Karich & Conclurer GbR',
 
@@ -710,7 +710,7 @@ class AllInOneMinify extends WireData implements Module, ConfigurableModule {
         // Calculate timestamp of all files
         // ------------------------------------------------------------------------
         foreach ($files as $file) {
-            $_timestamp = ($_timespamp + $file['last_modified']);
+            $_timestamp = ($_timestamp + $file['last_modified']);
         }
 
         // ------------------------------------------------------------------------
