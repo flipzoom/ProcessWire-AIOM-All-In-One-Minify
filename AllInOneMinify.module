@@ -68,7 +68,7 @@ class AllInOneMinify extends WireData implements Module, ConfigurableModule {
             // ------------------------------------------------------------------------
             // Version: major, minor, revision, i.e. 100 = 1.1.0
             // ------------------------------------------------------------------------
-            'version' => 321,
+            'version' => 322,
 
             'author' => 'David Karich & Conclurer GbR',
 
@@ -295,7 +295,7 @@ class AllInOneMinify extends WireData implements Module, ConfigurableModule {
         // ------------------------------------------------------------------------
         // Try to remove the cache folder.
         // ------------------------------------------------------------------------
-        if(chmod(wire('config')->paths->assets.self::$cacheDir.DIRECTORY_SEPARATOR, 0777) === false OR rmdir(wire('config')->paths->assets.self::$cacheDir.DIRECTORY_SEPARATOR) === false) {
+        if(wireChmod(wire('config')->paths->assets.self::$cacheDir.DIRECTORY_SEPARATOR) === false OR wireRmdir(wire('config')->paths->assets.self::$cacheDir.DIRECTORY_SEPARATOR, true) === false) {
 
             // ------------------------------------------------------------------------
             // If the folder and files can not be removed, trigger an error.
@@ -453,8 +453,8 @@ class AllInOneMinify extends WireData implements Module, ConfigurableModule {
             // ------------------------------------------------------------------------
             // Expire all CacheFiles
             // ------------------------------------------------------------------------
-            if (class_exists('PageRender')) {
-                if (file_exists(wire('config')->paths->cache . PageRender::cacheDirName . "/")) CacheFile::removeAll(wire('config')->paths->cache . PageRender::cacheDirName . "/");
+            if(class_exists('PageRender')) {
+                if(file_exists(wire('config')->paths->cache.PageRender::cacheDirName."/")) CacheFile::removeAll(wire('config')->paths->cache.PageRender::cacheDirName."/");
             }
 
             // ------------------------------------------------------------------------
@@ -476,7 +476,7 @@ class AllInOneMinify extends WireData implements Module, ConfigurableModule {
             // Write the minimized file to the file system.
             // ------------------------------------------------------------------------
             if (file_put_contents(wire('config')->paths->assets.self::$cacheDir.DIRECTORY_SEPARATOR.$cacheFile, self::_generatorInformation($_js), LOCK_EX) !== false) {
-                if(chmod(wire('config')->paths->assets.self::$cacheDir.DIRECTORY_SEPARATOR.$cacheFile, octdec(wire('config')->chmodFile)) === false) {
+                if(wireChmod(wire('config')->paths->assets.self::$cacheDir.DIRECTORY_SEPARATOR.$cacheFile) === false) {
                     throw new WireException('The permissions (chmod) for the combined js file could not be set. Verify that the permissions in the ProcessWire Configuration are sufficient ($config->chmodFile).');
                 }
             } else {
@@ -575,8 +575,8 @@ class AllInOneMinify extends WireData implements Module, ConfigurableModule {
             // ------------------------------------------------------------------------
             // Expire all CacheFiles
             // ------------------------------------------------------------------------
-            if (class_exists('PageRender')) {
-                if (file_exists(wire('config')->paths->cache . PageRender::cacheDirName . "/")) CacheFile::removeAll(wire('config')->paths->cache . PageRender::cacheDirName . "/");
+            if(class_exists('PageRender')) {
+                if(file_exists(wire('config')->paths->cache.PageRender::cacheDirName."/")) CacheFile::removeAll(wire('config')->paths->cache.PageRender::cacheDirName."/");
             }
 
             // ------------------------------------------------------------------------
@@ -622,7 +622,7 @@ class AllInOneMinify extends WireData implements Module, ConfigurableModule {
             // Write the minimized file to the file system.
             // ------------------------------------------------------------------------
             if (file_put_contents(wire('config')->paths->assets.self::$cacheDir.DIRECTORY_SEPARATOR.$cacheFile, self::_generatorInformation($_css), LOCK_EX) !== false) {
-                if(chmod(wire('config')->paths->assets.self::$cacheDir.DIRECTORY_SEPARATOR.$cacheFile, octdec(wire('config')->chmodFile)) === false) {
+                if(wireChmod(wire('config')->paths->assets.self::$cacheDir.DIRECTORY_SEPARATOR.$cacheFile) === false) {
                     throw new WireException('The permissions (chmod) for the combined CSS file could not be set. Verify that the permissions in the ProcessWire Configuration are sufficient ($config->chmodFile).');
                 }
             } else {
@@ -657,13 +657,17 @@ class AllInOneMinify extends WireData implements Module, ConfigurableModule {
         // ------------------------------------------------------------------------
         $_cacheFiles = new RecursiveDirectoryIterator(wire('config')->paths->assets.self::$cacheDir.DIRECTORY_SEPARATOR);
 
+        // Clear PHP stat() cache
+        // ------------------------------------------------------------------------
+        clearstatcache();
+
         // ------------------------------------------------------------------------
         // Remove all files that are older than the maximum lifetime.
         // ------------------------------------------------------------------------
-        foreach ($_cacheFiles as $_cacheFile) {
-            if (((filemtime(wire('config')->paths->assets.self::$cacheDir.DIRECTORY_SEPARATOR.$_cacheFile->getFilename()) + self::$cacheMaxLifetime) < time() OR $force_all === true) AND is_file($_cacheFile)) {
+        foreach($_cacheFiles as $_cacheFile) {
+            if(((filemtime(wire('config')->paths->assets.self::$cacheDir.DIRECTORY_SEPARATOR.$_cacheFile->getFilename()) + self::$cacheMaxLifetime) < time() OR $force_all === true) AND is_file($_cacheFile)) {
                 $_file  = wire('config')->paths->assets.self::$cacheDir.DIRECTORY_SEPARATOR.$_cacheFile->getFilename();
-                if(chmod($_file, 0777) !== false) {
+                if(wireChmod($_file) !== false) {
                     if(unlink($_file) === false) {
                         throw new WireException('The old cache files could not be deleted.');
                     }
@@ -682,7 +686,7 @@ class AllInOneMinify extends WireData implements Module, ConfigurableModule {
      * @return string           The minimized with code generation information
      */
     private static function _generatorInformation($data) {
-        return (!empty($data)) ? '/** Generated: '.date('l, jS \of F Y, h:i:s A').' // Powered by AIOM+ (All In One Minify) created by David Karich **/'.PHP_EOL.$data : '';
+        return (!empty($data)) ? '/** Generated: '.date('l, jS \of F Y, h:i:s A').' // Powered by AIOM+ (All In One Minify) created by FlipZoom Media Inc. - David Karich (flipzoom.de) **/'.PHP_EOL.$data : '';
     }
 
     /**
@@ -703,10 +707,10 @@ class AllInOneMinify extends WireData implements Module, ConfigurableModule {
         $_timestamp = '';
 
         // ------------------------------------------------------------------------
-        // Combine all timestamps to one string.
+        // Calculate timestamp of all files
         // ------------------------------------------------------------------------
         foreach ($files as $file) {
-            $_timestamp .= $file['last_modified'];
+            $_timestamp = ($_timespamp + $file['last_modified']);
         }
 
         // ------------------------------------------------------------------------
@@ -796,6 +800,13 @@ class AllInOneMinify extends WireData implements Module, ConfigurableModule {
         // Check existence and whether there is no external source.
         // ------------------------------------------------------------------------
         if(file_exists($_path) AND !stristr($_path, '//') AND self::_stristr_array_needle($_path, $extension)) {
+            
+            // Clear PHP stat() cache
+            // ------------------------------------------------------------------------
+            clearstatcache();
+
+            // Return information array
+            // ------------------------------------------------------------------------
             return array('absolute_path'    => $_path, 
                          'last_modified'    => filemtime($_path), 
                          'file_extension'   => pathinfo($_path, PATHINFO_EXTENSION));
