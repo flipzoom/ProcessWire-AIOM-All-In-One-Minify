@@ -161,6 +161,12 @@ If you are currently in development of the site, caching can be a problem. For t
 
 ##Changelog##
 
+3.2.2
+
+* Security Fix: CHMOD (#44)
+* Bugfix: MD5 hash with many files (#46)
+* Improvement in the detection of file changes
+
 3.2.1
 
 * Bugfix: $config->scripts was not included properly
