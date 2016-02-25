@@ -161,6 +161,10 @@ If you are currently in development of the site, caching can be a problem. For t
 
 ##Changelog##
 
+3.2.3
+
+* Typo fix in variable (Tanks to SteveB)
+
 3.2.2
 
 * Security Fix: CHMOD ([#44](https://github.com/conclurer/ProcessWire-AIOM-All-In-One-Minify/issues/44))
