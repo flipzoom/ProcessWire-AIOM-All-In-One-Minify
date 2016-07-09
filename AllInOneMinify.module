@@ -68,7 +68,7 @@ class AllInOneMinify extends WireData implements Module, ConfigurableModule {
             // ------------------------------------------------------------------------
             // Version: major, minor, revision, i.e. 100 = 1.1.0
             // ------------------------------------------------------------------------
-            'version' => 323,
+            'version' => 324,
 
             'author' => 'David Karich & Conclurer GbR',
 
@@ -503,7 +503,7 @@ class AllInOneMinify extends WireData implements Module, ConfigurableModule {
      * 
      * @return string              URL string of the combined stylesheet file
      */
-    public static function CSS($stylesheets) {
+    public static function CSS($stylesheets, $lessVars = null) {
 
         // ------------------------------------------------------------------------
         // Check if at least one file was passed.
@@ -603,6 +603,7 @@ class AllInOneMinify extends WireData implements Module, ConfigurableModule {
                     try {
                         $_less_parser   = new Less_Parser();
                         $_less_parser->parse($_css_src);
+                        if($lessVars) $_less_parser->ModifyVars($lessVars);
                         $_css_src       = $_less_parser->getCss();
 
                     } catch(Exception $error) {
@@ -742,6 +743,17 @@ class AllInOneMinify extends WireData implements Module, ConfigurableModule {
         // Directory traversal attacks.
         // ------------------------------------------------------------------------
         foreach ($asset_files as $_asset_file) {
+
+            // ------------------------------------------------------------------------
+            // check if file exists
+            // if not show error and continue
+            // ------------------------------------------------------------------------            
+            if(!is_file($_asset_file)) {
+                $msg = wire('config')->paths->templates . $_asset_file . ' does not exist';
+                if(function_exists('fl')) fl($msg);
+                else wire('log')->save('aiom', $msg);
+                continue;
+            }
 
             // ------------------------------------------------------------------------
             // Conditional loading
