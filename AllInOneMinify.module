@@ -710,7 +710,7 @@ class AllInOneMinify extends WireData implements Module, ConfigurableModule {
         // Calculate timestamp of all files
         // ------------------------------------------------------------------------
         foreach ($files as $file) {
-            $_timestamp = ($_timestamp + $file['last_modified']);
+            $_timestamp = ((int)$_timestamp + $file['last_modified']);
         }
 
         // ------------------------------------------------------------------------
