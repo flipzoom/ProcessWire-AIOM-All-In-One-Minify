@@ -1,13 +1,10 @@
-#AIOM+ (All In One Minify)#
-
-####Simple minify and parsing for CSS, LESS, JS and HTML####
------------------------------
+# AIOM+ (All In One Minify)
 
 AIOM+ (All In One Minify) is a ProcessWire module to easily improve the performance of your website. By a simple function call Stylesheets, LESS  and Javascript files can be parsed, minimized and combined into one single file. This reduces the server requests, loading time and minimizes the traffic. In addition, the generated HTML source code can be minimized and all generated files can be loaded over a cookieless domain (domain sharding).
 
 - - - 
 
-####Information####
+## Information
 
 * All paths are relative to the template folder. URLs in css files will be automatically corrected. Nothing needs to be changed.
 * If you make changes to the source stylesheet, LESS or javascript files, a new parsed and combined version is created automatically.
@@ -21,7 +18,7 @@ AIOM+ (All In One Minify) is a ProcessWire module to easily improve the performa
     * Definition of custom functions
 * Conditional loading of files based on a API selector
 
-##Table of content##
+## Table of content
 
 * [Installation](#installation)
 * [Minimize Stylesheets and parse LESS files](#minimize-stylesheets-and-parse-less-files)
@@ -36,7 +33,7 @@ AIOM+ (All In One Minify) is a ProcessWire module to easily improve the performa
 * [Changelog](#changelog)
 * [Others](#questions-or-comments)
 
-##Installation##
+## Installation
 
 1. Copy the files for this module to /site/modules/AllInOneMinify/
 2. In admin: Modules > Check for new modules. 
@@ -48,7 +45,7 @@ AIOM+ (All In One Minify) is a ProcessWire module to easily improve the performa
 2. Click tab "new" and enter Module Class Name: "AllInOneMinify"
 3. Click "Download and Install"
 
-##Minimize Stylesheets and parse LESS files##
+## Minimize Stylesheets and parse LESS files
 
 Minimization of a single file.
 
@@ -68,7 +65,7 @@ Minimize multiple files into one file. You can even mix stylesheet and LESS file
 
 **Tip:** You can also use the short syntax **"AIOM"**. For example, ```AIOM::CSS()```.
 
-##LESS variables access in multiple files##
+## LESS variables access in multiple files
 
 You have a LESS file in which you are defining, for example, all colors and another LESS file that defines the actual layout? Now you need in the layout LESS file access to the variables of the color LESS file? It's easier than you think. Through a simple referencing of source LESS file. For example: 
 
@@ -97,7 +94,7 @@ body {
 That's all. Pretty, hu? The full documentation of LESS you can find at: www.lesscss.org
 
 
-##Minimize Javascripts##
+## Minimize Javascripts
 
 Minimization of a single file.
 
@@ -113,7 +110,7 @@ Minimize multiple files into one file.
 
 **Tip:** You can also use the short syntax **"AIOM"**. For example, ```AIOM::JS()```.
 
-##Conditional loading##
+## Conditional loading
 
 Since AIOM+ version 3.1.1 javascripts, stylesheets and LESS files can be loaded based on a API selector. Here is an example of conditional loading: 
 
@@ -140,7 +137,7 @@ AIOM::CSS('../third-party-packages/package/css/example.css');
 
 To further enhance the performance and to give you maximum flexibility in the combining process, you now have the option to exclude certain files from the minimization (since version 2.2). All files that have the abbreviation ".min" or "-min" at the end of the file name and before the file extension, are no longer minimized. For example: ```file-1.js``` is minimized. ```file-1-min.js``` or ```file-1.min.js``` is not minimized. The same for CSS. ```file-1.css``` is minimized. ```file-1-min.css``` or ```file-1.min.css``` is not minimized.
 
-##Exemplary template structure##
+## Exemplary template structure
 
 ```/
 site/
@@ -149,17 +146,17 @@ site/
         js/
 ```
 
-##Minimize HTML##
+## Minimize HTML
 
 The generated HTML source code is automatically minimized when rendering. This requires no change to the templates. Conditional Comments, textareas, code tags, etc. are excluded from the minimization.
 
 **NOTE**: AIOM+ removes all whitespaces between two tags. If you explicitly need a whitespace, change the whitespace into an HTML entity: ```&nbsp;```. See ([#6](https://github.com/conclurer/ProcessWire-AIOM-All-In-One-Minify/issues/6))
 
-##Development mode##
+## Development mode
 
 If you are currently in development of the site, caching can be a problem. For this, you can enable the development mode since version 1.1.0 in the Backend (Module > AIOM > Config). The files will be combined, but not minimized and re-generated at each call. In addition, a no-cache GET parameter is appended with a timestamp to prevent the browser caching. For example: ```css_031ea978b0e6486c828ba444c6297ca5_dev.css?no-cache=1335939007```
 
-##Changelog##
+## Changelog
 
 3.2.3
 
@@ -280,13 +277,6 @@ If you are currently in development of the site, caching can be a problem. For t
 1.0.0  
 * Initial release
 
-##Questions or comments?##
+## Questions or comments?
 
-For any questions, suggestions or bugs please create a ticket on [GitHub](https://github.com/conclurer/ProcessWire-AIOM-All-In-One-Minify/issues). 
-
-
-##Old stable Version needed?##
-
-Under the following link you can find the old stable version of AIOM without LESS support: https://github.com/conclurer/ProcessWire-AIOM-All-In-One-Minify/tree/AIOM-(old-Stable-2.2.2)
-
-[![Analytics](https://ga-beacon.appspot.com/UA-7951064-10/ProcessWire-AIOM-All-In-One-Minify/blob/master/README.md?pixel)](https://github.com/igrigorik/ga-beacon)
+For any questions, suggestions or bugs please create a ticket on [GitHub](https://github.com/conclurer/ProcessWire-AIOM-All-In-One-Minify/issues).

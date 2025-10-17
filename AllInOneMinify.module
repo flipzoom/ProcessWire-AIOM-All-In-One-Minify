@@ -589,6 +589,7 @@ class AllInOneMinify extends WireData implements Module, ConfigurableModule {
             // everything in a variable together.
             // ------------------------------------------------------------------------
             foreach ($stylesheets as $stylesheet) {
+                if(empty($stylesheet) || empty($stylesheet['absolute_path'])) continue;
 
                 // ------------------------------------------------------------------------
                 // Load source of file and rewrite absolute URLs.
@@ -710,7 +711,7 @@ class AllInOneMinify extends WireData implements Module, ConfigurableModule {
         // Calculate timestamp of all files
         // ------------------------------------------------------------------------
         foreach ($files as $file) {
-            $_timestamp = ($_timestamp + $file['last_modified']);
+            $_timestamp = ((int)$_timestamp + (int)$file['last_modified']);
         }
 
         // ------------------------------------------------------------------------
