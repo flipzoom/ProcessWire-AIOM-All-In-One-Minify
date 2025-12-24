@@ -704,7 +704,7 @@ class AllInOneMinify extends WireData implements Module, ConfigurableModule {
         // ------------------------------------------------------------------------
         // Initialize timestamp variable.
         // ------------------------------------------------------------------------
-        $_timestamp = '';
+        $_timestamp = 0;
 
         // ------------------------------------------------------------------------
         // Calculate timestamp of all files
