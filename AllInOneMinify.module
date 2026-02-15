@@ -522,6 +522,7 @@ class AllInOneMinify extends WireData implements Module, ConfigurableModule {
         $stylesheets    = self::_fileArray($stylesheets, array('.css', '.less'));
         $cacheFile      = self::_getCacheName($stylesheets, self::$cssCachePrefix, '.css');
         $assetDomain    = self::_getAssetDomain();
+        $isVirtualHost = $_SERVER['DOCUMENT_ROOT'] !== str_replace($_SERVER['SCRIPT_NAME'], '', $_SERVER['SCRIPT_FILENAME']);
 
         // ------------------------------------------------------------------------
         // Check if there is already a combined and cached file. If not, 
@@ -594,7 +595,9 @@ class AllInOneMinify extends WireData implements Module, ConfigurableModule {
                 // Load source of file and rewrite absolute URLs.
                 // ------------------------------------------------------------------------
                 $_css_src   = file_get_contents($stylesheet['absolute_path']).PHP_EOL;
-                $_css_src = (!empty($_css_src)) ? Minify_CSS_UriRewriter::rewrite($_css_src, dirname($stylesheet['absolute_path'])) : $_css_src;
+                if (!empty($_css_src)) {
+                    $_css_src = Minify_CSS_UriRewriter::rewrite($_css_src, dirname($stylesheet['absolute_path']), $isVirtualHost ? wire('config')->paths->root : null);
+                }
 
                 // ------------------------------------------------------------------------
                 // If LESS file then run LESS parser.
